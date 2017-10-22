@@ -1,0 +1,279 @@
+\section{Exercise 10 - Church-Rosser Theorem}
+
+We must show that $\succ^{*}$ is confluent.
+
+Define $D : \Lambda \rightarrow \Lambda$ as:
+\begin{align*}
+ & D(x) = x \\
+ & D(\lambda x.t) = \lambda x. D(t)\\
+ & D((\lambda x.t)u) = D(t)[x:=D(u)]\\
+ & D(tu) = D(t) D(u) \text{\; if t is not an abstraction}
+\end{align*}
+
+
+
+\begin{lemma}
+  If $t \succ^{*} t'$ and $u \succ^{*} u'$ then $t[x:=u] \succ^{*} t'[x:=u']$.
+\end{lemma}
+\begin{proof}
+  Well known, it follows by induction over $t$ using the substitution lemma.
+\end{proof}
+
+We prove the following lemmas by induction over a term. We separate the
+application in cases depending if the first term is an abstraction or not,
+since the definition of $D$ is different in each case.
+
+\begin{lemma}
+ $ t \succ^{*} D(t)$
+\end{lemma}
+
+\begin{proof}
+  By induction over $t$.
+
+  \begin{itemize}
+  \item
+    If $t = x$ this is trivial since $D(t) = x$, so $t \succ^{0} D(t)$.
+  \item
+    If $t = \lambda x. a$, by induction hypothesis $a \succ^{*} D(a)$, since
+    $a$ is smaller than $t$,
+    so $\lambda x. a \succ^{*} \lambda x . D(a) = D(\lambda x. a)$
+  \item
+    If $t = (\lambda x . a) b$, then
+    $(\lambda x . a) b \succ a[ x:= b] \succ^{*}_{hip} D(a)[x:=D(b)]
+    = D((\lambda x.a) b)$ using Lemma 1 and induction hypothesis.
+  \item
+    Finally if $t = a b$ where $a$ is not an abstraction,
+    \begin{flalign*}
+      & a b &\succ^{*} &\text{ \{ by induction hypothesis, twice \} }
+      \hskip0.7\textwidth\\
+      & D(a)D(b) &=  &\text{ \{ by definition of $D$ \}}\\
+      &D(a b)
+    \end{flalign*}
+  \end{itemize}
+\end{proof}
+
+
+\begin{lemma}
+ If $ t \succ t'$ then $t' \succ^{*} D(t)$
+\end{lemma}
+
+\begin{proof}
+  By induction over $t$ (considering the rules for beta reductions).
+  \begin{itemize}
+  \item
+    If $t = x$ trivial (actually not possible, since $t$ has no redex).
+  \item
+    If $t= \lambda x . a$, then necessarly $t' = \lambda x. a'$
+    where $a \succ a'$ (there is only one redex rule for abstraction,
+    we reason by inversion). Then:
+    \begin{flalign*}
+      & t' &= & \\
+      & \lambda x . a' &\succ^{*} &\text{\{ by induction hypothesis in $a$\}}
+      \hskip0.7\textwidth\\
+      & \lambda x . D(a) &=  &\text{\{ by definition of $D$\}} \\
+      & D(\lambda x.a ) = D(t)
+    \end{flalign*}
+    \item
+      If $t = (\lambda x . a) b$ it can reduce in one step to
+      $(\lambda x . a') b$,
+      $(\lambda x . a) b'$ or $a[x:= b]$ (where $a \succ a'$, $b \succ b'$).
+      Applying one more reduction
+      to the first two cases (in the outhermost redex), it is enough to show
+      that $a'[x:= b]$, $a[x:= b']$, $a[x:= b]$ all reduces (in $*$ steps) to
+      $D(t) = D(a) [x:= D(b)]$.
+      This is trivial applying Lemma 1, and Lemma 2 and induction hypothesis
+      to the instances of $t$ and $u$
+      (induction to the primes, lemma to the untouched substerms).
+      For instance $a[x:=b'] \succ^{*} D(a)[x:=D(b)]$ follows from applying
+      Lemma 2 to a, inductive hypothesis to b', and Lemma 1 outside.
+    \item
+      If $t = a b$ with $a$ not being an abstraction, $t$ reduces to either
+      $a' b$ or $a b'$ (where $a \succ a'$, $b \succ b'$). $D(t) = D(a)D(b)$,
+      Apply Lemma 2 and induction hypothesis to the suitable subterm again,
+      and we are done.
+  \end{itemize}
+\end{proof}
+
+\begin{lemma}
+  It $t \succ u$ then $D(t) \succ^{*} D(u)$
+\end{lemma}
+\begin{proof}
+  Again, by induction over $t$, considering the possible beta reductions.
+
+  \begin{itemize}
+  \item
+    $t=x$ is trivial, no reduction.
+  \item
+    $t= \lambda x. a$ can only reduce to $u = \lambda x. a'$
+    with $a \succ a'$,
+    then $D(t) = \lambda x. D(a)$ and $D(u) = \lambda x . D(a')$, from
+    induction hypothesis ($a$ is smaller than $t$) $D(a) \succ^{*} D(a')$ and
+    the result follows.
+  \item
+    If $t = a b$ where $a$ is not an abstraction, it is inmediate again
+    applying the induction hypothesis in the term that is reduced
+    (this is allways the easy -inductive- case).
+  \item
+    If $t = (\lambda x. a) b$, $t$ can reduce to $(\lambda x . a') b$,
+    $(\lambda x . a) b'$ or $a[x:= b]$ (where $a \succ a'$, $b \succ b'$).
+    In the last two cases it is easy to apply the induction hypothesis,
+    in the former one, when $t$ reduces to $ u = a[x:= b]$, so we must
+    show that $D(t) = D((\lambda x . a) b) = D(a)[x := D(b)]$ reduces
+    (in $*$ steps) to
+    $D(a[x:= b])$. We demonstrate this in the next lemma.
+  \end{itemize}
+\end{proof}
+
+\begin{lemma}
+  $D(t)[x:= D(u)] \succ^{*} D(t[x:=u])$
+\end{lemma}
+
+\begin{proof}
+  By induction over $t$.
+  \begin{itemize}
+  \item
+    If $t = y$, again it is trivial. If y = x both sides are $D(u)$, if
+    $y \neq x$ both sides are $D(y)$.
+  \item
+    if $t= \lambda y . a$ then
+    \begin{flalign*}
+      &D(t)[x:=D(u)]  &= &\\
+      &D(\lambda y.a)[x:=D(u)] &= &\text{ \{ by definition of $D$\} }
+      \hskip0.7\textwidth\\
+      &(\lambda y.D(a))[x:=D(u)]&= &\text{\{by definition of substitution,
+        assuming $y \neq x$, otherwise rename y \}}\\
+      &\lambda y.(D(a)[x:=D(u)])&\succ^{*}
+      &\text{\{by inductive hypothesis\}}\\
+      &\lambda y.D(a[x:=u])&= &\text{\{by definition of $D$\}}\\
+      &D(\lambda y.(a[x:=u]))&= &\text{\{by definition of substitution\}}\\
+      &D((\lambda y.a)[x:=u])&= &\\
+      &D(t[x:=u])& &\\
+    \end{flalign*}
+  \item
+    The application case is tricky. We must study separate cases, one more
+    than before, We will see why.
+    \begin{itemize}
+    \item
+      If $t = (\lambda y . a) b$:
+      \begin{flalign*}
+      &D(t)[x:=D(u)]  &= &\\
+      &D((\lambda y.a)b)[x:=D(u)] &= &
+      \hskip0.7\textwidth\\
+      &D((\lambda y.a)b)[x:=D(u)] &= &\text{ \{ by definition of $D$\} }\\
+      &(D(a)[y := D(b)])[x:=D(u)] &\succ^{*} &
+      \text{ \{ by substitution lemma\} }\\
+      &(D(a)[x := D(u)])[y := D(b)[x:=D(u)]] &\succ^{*}
+      &\text{ \{ by inductive hypothesis \} }\\
+      &(D(a[x := u)])[y := D(b)[x:=D(u)]] &\succ^{*}
+      &\text{ by inductive hypothesis}\\
+      &(D(a[x := u)])[y := D(b[x:=u]] &=
+      &\text{ by definition of $D$}\\
+      &D((\lambda y. a[x:= u])(b[x:=u])) &=
+      &\text{ by definition of substitution}\\
+      &D(((\lambda y. a)[x:= u])(b[x:=u])) &=
+      &\text{ by definition of substitution}\\
+      &D((\lambda y. a)b[x:= u]) &=
+      &\\
+      &D(t[x:= u]) &
+      &
+      \end{flalign*}
+    \item
+      If $t = a b$, and a is not a variable, then:
+      \begin{flalign*}
+        &D(t)[x:=D(u)]  &= &\\
+        &D(a b)[x:=D(u)]&= &\text{ \{ by definition of $D$\} }
+        \hskip0.7\textwidth\\
+        &(D(a) D(b))[x:=D(u)]&= &\text{ \{ by definition of substitution\}}\\
+        &(D(a)[x:=D(u)]) (D(b)[x:=D(u)])&= &\text{\{by hypothesis, twice\}}\\
+        &D(a[x:=u]) D(b[x:=u])&= &\text{ \{ by definition of $D$\} }\\
+        &D(a[x:=u] b[x:=u])&= &\text{ \{ by definition of substitution\} }\\
+        &D((a b)[x:=u])&= &\\
+        &D(t[x:=u])& &
+      \end{flalign*}
+      \item
+        If $t = x b$
+        this case is different to the previous one since the substitution
+        could generate a new redex. Note that if $t = y b$
+        where $y \neq x$ the proof is like in the former case.
+      \begin{flalign*}
+        &D(t)[x:=D(u)]  &= &\\
+        &D(x b)[x:=D(u)]&= &\text{ \{ by definition of $D$\} }
+        \hskip0.7\textwidth\\
+        &(D(x) D(b))[x:=D(u)]&= &\text{ \{ by definition of substitution\}}\\
+        &(D(x)[x:=D(u)]) (D(b)[x:=D(u)])&=
+        &\text{ \{ by definition of substitution and $D$ \} }\\
+        &(D(u)) (D(b)[x:=D(u)])&=
+        &\text{ \{ applying inductive hypothesis\} }\\
+        &(D(u)) (D(b[x:=u]))&=
+        &\text{ \{ applying substitution backwards\} }
+      \end{flalign*}
+      If $u$ is not an abstraction there is no problem (rewrite
+      the definition of $D$ backwards and so on). If $u = \lambda y.c$ then:
+      \begin{flalign*}
+        &(D(u)) (D(b[x:=u]))&=
+        &
+        \hskip0.7\textwidth\\
+        &(D(\lambda y.c)) (D(b[x:=u]))&=
+        &\text{ \{ by definition of $D$\} }\\
+        &(\lambda y.D(c)) (D(b[x:=u]))&\succ
+        &\text{ }\\
+        &D(c)[y:= (D(b[x:=u]))]&=
+        &\text{ \{ rewriting $D$\}}\\
+        &D((\lambda y.c)(b[x:=u])) &= &\\
+          &D(u (b[x:=u]))&= & \text{ \{ by definition of substitution\}}\\
+            &D((x [x:= u]) (b[x:=u]))&= &
+              \text{ \{ by definition of substitution\}}\\
+              &D(x u [x:=u])& &
+      \end{flalign*}
+    \end{itemize}
+  \end{itemize}
+\end{proof}
+
+\begin{lemma}
+  $t \succ^{*} u$ implies
+  $D(t) \succ^{*} D(u)$
+\end{lemma}
+\begin{proof}
+  By induction over the number of steps of the $t \succ^{*} u$ reduction.
+  If $n = 1$ then this is an instance of Lemma 4.
+
+  If $t\succ^{n} u$ then consider the first reduction, so $t \succ t'$,
+  $t' \succ^{n-1} u$. By induction hypothesis $D(t') \succ^{*} D(u)$,
+  and by Lemma 4 $D(t) \succ^{*} D(t')$. By transitivity of $\succ^{*}$
+  follows that $D(t) \succ^{*} D(u)$.
+\end{proof}
+
+
+\begin{lemma}
+  $t \succ^{n} u$ implies
+  $u \succ^{*} D^{n}(t)$
+\end{lemma}
+\begin{proof}
+  Again, by induction over the length of reduction.
+
+  For the base case, this is exactly Lemma 3.
+
+  For $t \succ^{n} u$ with $n>1$ consider again the first reduction,
+  so $t \succ t'$ and $t' \succ^{n-1} u$. $t' \succ^{*} D(t)$ by Lemma 3, and
+  by induction hypothesis $u \succ^{*} D^{n-1}(t')$, Applying Lemma 6
+  $D^{n-1}(t') \succ^{*} D^{n-1}(D(t)) = D^{n}(t)$. By transitivity of
+  $\succ^{*}$ then $u \succ^{*} D^{n}(t)$ as we claim.
+\end{proof}
+
+\begin{theorem}[Church-Rosser Theorem]
+  The relation $\succ^{*}$ is confluent. This is, if $t \succ^{*} t_1$
+  and $t \succ^{*} t_2$ then there is a term $v$ such that $t_1 \succ^{*} v$
+  and $t_2 \succ^{*} v$.
+\end{theorem}
+
+\begin{proof}
+  If $t \succ^{n} t_1$ and $t \succ^{m} t_2$, then applying Lemma 7
+  $t_1 \succ^{*} D^n(t)$ and $t_2 \succ^{*} D^m(t)$.
+  Without loss of generality assume that $m \geq n$. It is easy to show that
+  $D^n(t) \succ^{*} D^m(t)$ (Applying Lemma 2 $m-n$ times,
+  $t \succ^{*} D^{m-n}(t)$, then Apply Lemma 6 $n$ times, or more formal, we
+  can prove by an easy induction).
+
+  Then by transitivity of $\succ^{*}$ is true that $t_1 \succ^{*} D^m(t)$,
+  take $u = D^m(t)$.
+\end{proof}

@@ -1,0 +1,132 @@
+
+\section*{Exercise 7}
+
+A great advantage of Scott numerals is that the predecessor function can be
+encoded efficiently. On the other hand, functions like sum, that are computed
+in constant time in Church's implementation, are linear in this case.
+
+Let $ \bar{0} := \lambda f x . x $ and $ S := \lambda n f x . f n $
+
+It is not hard to show that
+
+$ \bar{n}
+= \lambda f x . f (\lambda f x . f ( ...(\lambda f x . f (\lambda f x. x))))$
+(each successor application is a double abstraction, applying the first
+argument, where $\bar{0}$ is the second double abstraction using the second
+argument).
+
+\subsection*{Zero test}
+
+$Zero := \lambda m t f . m (\lambda \_ . f) t$ where
+
+
+$Zero$ applied to a numeral $m$ must be a boolean, so there are two extra
+arguments (recall: $True = \lambda t f.t$, $False = \lambda t f . f$).
+
+Then apply $m$ to a function that eats an argument and returns $f$, and to
+$t$. If $m$ is $\bar{0}$ we use the second argument ($t$), else the result is
+apply $f$ to the predecessor of $m$, eating it and returning $f$.
+
+$$
+Zero \; \bar{0} = Zero \; (\lambda f x . x) =
+(\lambda m t f . m (\lambda \_ . f) t) (\lambda f x . x) \succ
+\lambda t f . (\lambda f x . x) (\lambda \_ . f) t  \succ^{2} \lambda t f .t
+$$
+
+$$
+Zero \; \bar{0} = Zero \; (\lambda f x . f N) =
+(\lambda m t f . m (\lambda \_ . f) t) (\lambda f x . f N) \succ
+\lambda t f . (\lambda f x . f N) (\lambda \_ . f) t
+\succ^{2} \lambda t f . (\lambda \_ . f) N \succ \lambda t f . t
+$$
+
+Note that we can use zero test as a case analysis. EXPLAIN
+
+
+\subsection*{Predecessor}
+
+Erase the first two abstractions and the application of the first
+parameter. So, apply the numeral to the identity and somewhat else.
+
+$Pred := \lambda m . m \: (id) \: y$
+
+Thus:
+
+$$
+Pred \; \bar{0} = (\lambda m . m \: (id) \: y) (\lambda f x. x)
+\succ (\lambda f x. x) (id) y \succ^{2} y
+$$
+
+So $y$ is the value of $Pred \; \bar{0}$, we can redefine
+$Pred := \lambda m . m \: (id) \: \bar{0}$ if we want that
+$Pred \: \bar{0} \succ^{*} \bar{0}$, wich is a reasonable implementation.
+
+$$
+Pred \; (S N) = (\lambda m . m \: (id) \: y) (\lambda f x. f N)
+\succ (\lambda f x. f N) (id) y \succ^{2} (id) N \succ N
+$$
+
+\subsection*{Recursor}
+
+It is programmed exactly in the same way than for Church numerals, since we
+do not touch the "low level implementation" (of course, all advantages of
+modularization are also true in this level).
+
+R must take a function to apply in the recursive case, and value to return
+in the zero case, it must satisfy this equations:
+
+
+\begin{align}
+  R f a \bar{0} &\equiv_{\beta} a \\
+  R f a (S N) &\equiv_{\beta} f (S N) (R f a N)
+\end{align}
+
+The second equation can be rewtited as
+
+\begin{align}
+  R f a N &\equiv_{\beta} f N (R f a (Pred N))
+\end{align}
+
+To avoid pattern matching in the numeral argument. Then, combine both (1) and
+(3) as:
+
+\begin{align}
+  R \: f \: a \: N &\equiv_{\beta} Zero \: N \:a (f N (R \: f \:a (Pred\: N)))
+\end{align}
+
+Finally we use the usual trick to write recursive functions. Given the $Y$
+fixpoint combinator, let $R := Y \: R'$ where
+
+$$
+R' = \lambda R \:f \:a \:n . Zero \: n\: a\: (f\: n (R \:f \:a \:(pred \: n)))
+$$
+
+\section*{Adition, Multiplication, Exponentiation}
+
+Since the $Pred$ function reduces in constant time, these functions
+can be implemented using the recursor without much overhead.
+
+$Add := \lambda \: m \:n . R \: (\lambda \_ . S) \: m \: n$
+
+$Mul := \lambda \: m \:n . R \: (\lambda \_ . Add \: m)\: \bar{0} \: n$
+
+$Exp := \lambda \: m \:n . R \: (\lambda \_ . Mul \: m)\: \bar{1} \: n$
+
+\section*{Equality test and Comparison}
+
+First define
+
+$Sub := \lambda \: m \:n . R \: (\lambda \_ . Pred) \: m \: n$
+
+The substraction function (with the implementation od $Pred$ such that
+$Pred \: \bar{0} = \bar{0}$).
+
+Then:
+
+$Leq = \lambda m \: n . Zero (Sub \: m \: n)$
+
+$Eq = \lambda m \: n . And (Leq \: m \: n)(Leq \:  n \: m) $
+
+where $And = \lambda a \: b \: t \: f . a \: b (\lambda t \: f . f)$
+
+(Can be implemented more efficiently, of course)

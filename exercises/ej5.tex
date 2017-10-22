@@ -1,0 +1,86 @@
+
+\section*{Exercise 5}
+
+A good idea to think how to construct the terms is to reason over the
+types that they should have. Even if the system is untyped, this
+strategy works. Type systems usually restrict which terms can be constructed,
+but they do not affect reduction. If we construct a term assuming a type
+system and it reduces as we want, it will work in the untyped calculus.
+
+In this exersise whe should encode the universal property of coproduct.
+$\Sigma_i$ are the constructors (usually $inl$, $inr$ in functional
+programming literature), so they have type $A_i \rightarrow A_1 + A_2$.
+
+Since we do not have a primitive way to construct a sum type (in the way
+we defined our calculus), we have to encode it in
+the same way we encode, for example Booleans with the type
+$ X \rightarrow X \rightarrow X$ (given two terms of type $X$,
+in which one you choose you have a bool of information).
+
+Using this reasoning, a good way to type the terms is:
+$$\Sigma_i : A_i \rightarrow
+            (A_1 \rightarrow B) \rightarrow
+            (A_2 \rightarrow B) \rightarrow
+            B
+$$
+
+
+So
+$$
+    \Sigma_1 = \lambda t f g . f t \\
+$$
+$$
+    \Sigma_2 = \lambda t f g . g t
+$$
+
+are good definitions.
+
+$C$ is the destructor of this case analysis, it should have type
+
+$$
+    C : A_1 + A_2 \rightarrow
+       (A_1 \rightarrow B) \rightarrow
+       (A_2 \rightarrow B) \rightarrow
+       B
+$$
+
+So
+$$
+     C = \lambda c f g . c f g \\
+$$
+
+is a possible definition (recall: unfold the definition of $A_1 + A_2$
+and this type checks).
+
+Finally we can verify:
+
+$$
+    \underline{C} (\Sigma_1 t) f_1 f_2
+    \succ^{3}  (\Sigma_1 t) f_1 f_2
+    = (\underline{\lambda t f g} . f t) t f_1 f_2
+    \succ^{3} f_1 t
+$$
+$$
+    \underline{C} (\Sigma_2 t) f_1 f_2
+    \succ^{3}  (\Sigma_2 t) f_1 f_2
+    = (\underline{\lambda t f g} . g t) t f_1 f_2
+    \succ^{3} f_2 t
+$$
+
+note: Actually $C = Id$ works fine and we need less reductions, I preferred
+this presentation because is inmediate from some program calculation from
+types, I think also that this technique will be useful to derive
+harder $\lambda$-programs.
+
+note: This is probably not the unique way to code coproducts.
+
+note: $C$ is actually a (prefix) {\tt case} construction,
+($C \: u \: f \: g$) actually models:
+
+{\tt
+  case u of\\
+  {\setlength\parindent{24pt}
+    \indent inl t  $\rightarrow$ f t\\
+    \indent inr t  $\rightarrow$ g t
+  }
+}

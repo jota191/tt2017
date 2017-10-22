@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage[english]{babel}
+%\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+%\usepackage{aeguill}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage[utf8]{inputenc}
+
+%\newcommand{\R}{\mbox{$\mathbbm{R}$}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+% Definici\'{o}n de la hoja
+\textheight 24cm \textwidth 17cm \topmargin -10mm \oddsidemargin
+-3mm \evensidemargin -3mm
+
+% Sangr\'{\i}as del primer rengl\'{o}n
+\setlength{\parindent}{0pt}
+
+\renewcommand{\baselinestretch}{1.2}
+
+\pagestyle{empty} \pagenumbering{arabic}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+
+\title{Resolution of exercises}
+\author{Juan García Garland}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\section*{Some Remarks}
+
+\subsection*{Notation}
+We write $\lambda f g . t$ instead of $\lambda f . \lambda g . t$ as usual.
+we write $\lambda \_ . t$ to construct a term that "eats an argument". So
+$\_$ is a variable such that $\_ \notin FV(t)$
+
+
+\input{ej5}
+
+\newpage
+\input{ej7}
+
+\newpage
+
+\input{ej10}
+
+\end{document}
