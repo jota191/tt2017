@@ -1,0 +1,65 @@
+(*Use nat.*)
+
+(* The first thing we do is define a sort for the naturals*)
+Sort nat.
+
+(* Define constants for 0 and suc*)
+
+Cst O : nat.
+Cst Prefix[2] "S" x : nat -> nat.
+
+(* Definition of Naturals as usual in HOL*)
+def N x = /\X (X O -> (/\y (X y -> X (S y))) -> X x).
+
+(* The two axioms of naturals in HOL*)
+
+claim O_neq_S /\x:N (O != S x).
+claim S_inj /\x:N /\y:N (S x = S y -> x = y).
+
+(* These are the excercises in the notes, (not in the same order) *)
+
+
+fact O_in_N N O.
+intros.
+axiom H.
+save.
+
+fact N_then_SN /\x (N x -> N (S x)).
+intros.
+intros.
+elim H.
+elim H1 with O.
+axiom H0.
+intros.
+elim H1 with S y.
+axiom H2.
+save. (*revisar, estoy haciendo cosas demás*)
+
+
+(*induction principle over Nat*)
+fact ind_N 
+ /\P (P O -> /\y:N (P y -> P (S y)) -> /\x:N P x).
+
+
+intros.
+elim -1 [r] N x & P x. (*what the hack*)
+elim H1.
+
+trivial.
+trivial.
+
+save.
+
+
+(* Definition of Addition*)
+
+def Add x y z = /\P ((/\y P O y y) ->
+(/\x,y,z (P x y z -> P (S x) y (S z)))->
+P x y z).
+
+fact conm_add /\x,y,z (Add x y z -> Add y x z).
+intros.
+intros.
+unfold_hyp H Add.
+apply H with P.
+ apply G with H0.
