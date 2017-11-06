@@ -39,8 +39,6 @@ save. (*revisar, estoy haciendo cosas demás*)
 (*induction principle over Nat*)
 fact ind_N 
  /\P (P O -> /\y:N (P y -> P (S y)) -> /\x:N P x).
-
-
 intros.
 elim -1 [r] N x & P x. (*what the hack*)
 elim H1.
@@ -50,16 +48,27 @@ trivial.
 
 save.
 
+new_elim -n N ind ind_N.
 
-(* Definition of Addition*)
+(*Addition*)
 
-def Add x y z = /\P ((/\y P O y y) ->
-(/\x,y,z (P x y z -> P (S x) y (S z)))->
-P x y z).
+(* I'll define Addition by axioms, since for the excercises of
+proving conmmutativity, associativity and distributivity, this rules
+are already proved (althought definite description is used to define
+operations)
+If I have time I'll redefine operations
+*)
 
-fact conm_add /\x,y,z (Add x y z -> Add y x z).
+Cst lInfix[3.5] x "+" y : nat -> nat -> nat.
+(*axiom axioms defining addition  *)
+claim add_O_N /\y:N (O + y = y).
+claim add_S_N /\x,y:N ((S x) + y = S (x + y)).
+
+(*conmutativity*)
+
+theorem add_conm /\x,y:N (x + y = y + x).
 intros.
-intros.
-unfold_hyp H Add.
-apply H with P.
- apply G with H0.
+elim H.
+elim H0.
+trivial.
+elim add_O_N with y0.
