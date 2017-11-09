@@ -39,18 +39,114 @@ Axiom O_not_S: forall n :N, O <> S n.
 Variable Add : N -> N -> N.
 Infix "+" := Add.
 
+(* 
 
-Axiom add_O : forall x y : N, (S x)+ y = S (x + y).
-Axiom add_S : forall x y : N, O + y = y.
+we introduce this theorems as axioms, but they are proved from the definition
+of Addition actually 
 
+*)
+
+Axiom add_S : forall x y : N, (S x)+ y = S (x + y).
+Axiom add_O : forall y : N, O + y = y.
+
+
+(*
+again, this is proved from the definition of N, but here we use is as an axiom
+*)
 
 Axiom Nat_ind: 
 forall P: N -> Prop, P O -> (forall n:N, P n -> P(S n)) -> forall n:N, P n.
 
-Theorem nat_conm : forall n m: N, (n+m) = (m + n).
+Lemma O_add_conm : forall n:N, n = n + O.
+Proof.
+apply Nat_ind.
+rewrite (add_O O).
+trivial.
+intros.
+rewrite (add_S).
+rewrite <- H.
+reflexivity.
+Qed.
+
+
+Lemma add_S2 : forall n m : N, m + S n = S(m + n).
+Proof.
 intro.
 apply Nat_ind.
+rewrite (add_O).
+rewrite add_O.
+trivial.
+intros.
+rewrite add_S.
+rewrite H.
+rewrite add_S.
+reflexivity.
+Qed.
 
+
+Theorem add_conm : forall n m: N, (n+m) = (m + n).
+Proof.
+intro.
+apply Nat_ind.
+rewrite <- O_add_conm.
+rewrite (add_O n).
+trivial.
+intros.
+
+rewrite add_S.
+rewrite <-H.
+apply (add_S2 n0 n).
+Qed. 
+
+(* Now we define product, again from equational axioms instead of derive them *)
+
+Variable Mul : N -> N -> N.
+Infix "*" := Mul.
+
+
+Axiom mul_O : forall n:N, O * n = O.
+Axiom mul_S : forall m n:N, (S m) * n = n + (m * n).
+
+
+
+Lemma O_mul_conm : forall n:N, O = n * O.
+Proof.
+apply Nat_ind.
+rewrite (mul_O O).
+trivial.
+intros.
+rewrite (mul_S).
+rewrite <- H.
+rewrite (add_O O).
+reflexivity.
+Qed.
+
+
+Lemma mul_S2 : forall n m : N, m * S n = m + (m * n).
+Proof.
+intro.
+apply Nat_ind.
+rewrite (mul_O).
+rewrite add_O.
+rewrite (mul_O).
+trivial.
+intro m.
+intros.
+
+rewrite mul_S.
+rewrite add_S.
+rewrite add_S.
+rewrite mul_S.
+rewrite H.
+
+rewrite 
+
+Qed.
+
+Theorem mul_conm : forall n m:N, n * m = m * n.
+Proof.
+intro n.
+apply Nat_ind.  
 
 
 
