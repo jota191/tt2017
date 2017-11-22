@@ -1,0 +1,95 @@
+\section{Exercise 21}
+
+In general, in simply typed $\lambda$-calculus
+if we can derive a typing judgement $\Gamma \vdash t : A$
+then we can derive it extending the context.
+
+Also, if we can make a derivation in HOL,
+expanding the context (of assumptions) we can also make the derivation
+(just ignore the new axioms).
+
+Let's be more precise:
+
+\begin{lemma}
+  If $\Gamma \vdash t : A$ and $x \notin Dom(\Gamma)$
+  then $\Gamma, x:X \vdash t : A$
+\end{lemma}
+\begin{proof}
+  This is trivial by induction on $t$. Since the typing derivation
+  is syntax directed, for each shape of $t$ there is only one rule
+  that could be applied in that case.
+  \begin{itemize}
+  \item
+    If $t = x$ then the only possible derivation is
+    \begin{prooftree}
+      \AxiomC{ $\Gamma(x) = A$ }
+      \UnaryInfC{$x : A$}
+    \end{prooftree}
+
+    and then the following derivation is well-formed:
+    
+    \begin{prooftree}
+      \AxiomC{ $ (\Gamma,y : X) (x) = A$ }
+      \UnaryInfC{ $x : A$ }
+    \end{prooftree}
+
+    since the extension of a function does not change the value in
+    a point of the previous domain.
+    
+  \item
+    If $t = \lambda x.b$ then the typing derivation must be like:
+    
+    \begin{prooftree}
+      \AxiomC{ $\Gamma, x:A \vdash b : B $ }
+      \UnaryInfC{$\Gamma \vdash  \lambda x. b : A \Rightarrow B$}
+    \end{prooftree}
+
+    Then the following derivation is well formed:
+    \begin{prooftree}
+      \AxiomC{ $\Gamma, x:A, y:X \vdash b : B $ }
+      \UnaryInfC{$\Gamma, y:X \vdash  \lambda x. b : A \Rightarrow B$}
+    \end{prooftree}
+
+  \item
+    The application case is even more
+    trivial since there is no manipulation of the context.
+  \end{itemize}
+\end{proof}
+
+
+
+\begin{lemma}
+  If $\Gamma \vdash t : A$ then $\Gamma,\Delta \vdash t : A$, assuming
+  $\Gamma$ and $\Delta$ with disjoint domains.  
+\end{lemma}
+
+\begin{proof}
+  This is trivial by induction in the size of $\Delta$. Note that we
+  are assuming that contexts are finite.
+\end{proof}
+
+Then if $\gamma \vdash A : o $ we have
+$\gamma,\delta \vdash A : o $. So if $\Gamma$ is a well formed
+set of axioms under the context $\gamma$ of the underlying simply typed
+lambda calculus, it is well formed under $\gamma, \delta$.
+
+So $\gamma; \Gamma \vdash A$ implies $\gamma,\delta; \Gamma \vdash A$
+
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+
+This rule is not derivable. We are not doing sequent calculus so there
+is no way to introduce formulas in the left. Formally this is proved
+trivially by induction over the rules.
+
