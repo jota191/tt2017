@@ -1,0 +1,69 @@
+\section{Exercise 21}
+
+The first rule is admissible but cannot be derived.
+
+
+For the second rule, let's do a formal proof:
+
+
+\begin{theorem}
+
+  The following rule is derivable, assuming $x \notin FV(B)$:
+  
+  
+  \begin{prooftree}
+    \AxiomC{$\gamma ; \Gamma \vdash \exists_s x . A$}
+    \AxiomC{$\gamma, x:s ; \Gamma \vdash A \Rightarrow B$}
+       \RightLabel{$\exists_e$}
+    \BinaryInfC{$\gamma; \Gamma \vdash B$}
+  \end{prooftree}
+
+\end{theorem}
+
+
+% some definitions
+
+\newcommand{\existsX}{\exists_s x}
+\newcommand{\existsXUnfolded}
+           {\lambda X. \forall_o Y .
+             (\forall_s x. X x \Rightarrow Y) \Rightarrow Y }
+
+\newcommand{\existsApplied}
+           {\forall_o Y .
+             (\forall_s x. A x \Rightarrow Y)
+             \Rightarrow Y }
+
+           
+\begin{proof}
+
+  Note that $\existsX A \equiv_{\text{def}}
+  (\existsXUnfolded) A \succ_{\beta} \existsApplied $
+
+\begin{prooftree}
+
+  \AxiomC{$\gamma, x:s ; \Gamma \vdash A \Rightarrow B$}
+     \RightLabel{$\forall_i$}
+  \UnaryInfC{$\gamma ; \Gamma \vdash \forall x_s . (A x \Rightarrow B)$}
+  
+  \AxiomC{$\gamma \vdash B : o$}
+  
+  \AxiomC{$\gamma \vdash \existsX A : o $}
+  \AxiomC{$  \existsApplied \equiv_{\beta}  \existsX A$}
+  \AxiomC{$\gamma; \Gamma \vdash \existsX A$}
+     \RightLabel{$\beta$}
+  \TrinaryInfC{$\gamma; \Gamma \vdash \existsApplied $}
+
+     \RightLabel{$\forall_e$}
+  \BinaryInfC{$ \gamma ; \Gamma \vdash
+    (\forall_s x. A x \Rightarrow B) \Rightarrow B$}
+
+     \RightLabel{$\Rightarrow_e$}
+  \BinaryInfC{$\gamma ; \Gamma \vdash B$}
+\end{prooftree}
+
+Note that leaves are axioms, a $\beta$-equivalence,
+and $\gamma \vdash B:o$ which must be true since
+$ \gamma, x:s \vdash (A \Rightarrow B) : o$
+
+
+\end{proof}
