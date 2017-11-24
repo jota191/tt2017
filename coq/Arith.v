@@ -54,14 +54,14 @@ Axiom add_O : forall y : N, O + y = y.
 again, this is proved from the definition of N, but here we use is as an axiom
 *)
 
-Axiom Nat_ind: 
+Axiom Nat_Ind: 
 forall P: N -> Prop, P O -> (forall n:N, P n -> P(S n)) -> forall n:N, P n.
 
-Lemma O_add_conm : forall n:N, n = n + O.
+Lemma add_O_R_Identity : forall n:N, n = n + O.
 Proof.
-apply Nat_ind.
+apply Nat_Ind.
 rewrite (add_O O).
-trivial.
+reflexivity.
 intros.
 rewrite (add_S).
 rewrite <- H.
@@ -72,7 +72,7 @@ Qed.
 Lemma add_S2 : forall n m : N, m + S n = S(m + n).
 Proof.
 intro.
-apply Nat_ind.
+apply Nat_Ind.
 rewrite (add_O).
 rewrite add_O.
 trivial.
@@ -83,6 +83,17 @@ rewrite add_S.
 reflexivity.
 Qed.
 
+Lemma add_assoc : forall m n k: N, ((n + m) + k =  n + (m + k)).
+Proof.
+intro m.
+intro n.
+apply Nat_Ind.
+rewrite <- add_O_R_Identity.
+rewrite <- add_O_R_Identity.
+reflexivity.
+
+
+Qed.
 
 Theorem add_conm : forall n m: N, (n+m) = (m + n).
 Proof.
@@ -96,7 +107,7 @@ intros.
 rewrite add_S.
 rewrite <-H.
 apply (add_S2 n0 n).
-Qed. 
+Qed.
 
 (* Now we define product, again from equational axioms instead of derive them *)
 
@@ -122,6 +133,8 @@ reflexivity.
 Qed.
 
 
+
+
 Lemma mul_S2 : forall n m : N, m * S n = m + (m * n).
 Proof.
 intro.
@@ -134,12 +147,13 @@ intro m.
 intros.
 
 rewrite mul_S.
-rewrite add_S.
-rewrite add_S.
-rewrite mul_S.
 rewrite H.
 
-rewrite 
+rewrite mul_S.
+rewrite add_S.
+rewrite add_S.
+
+
 
 Qed.
 
