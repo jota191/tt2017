@@ -69,7 +69,7 @@ reflexivity.
 Qed.
 
 
-Lemma add_S2 : forall n m : N, m + S n = S(m + n).
+Lemma add_S_R : forall n m : N, m + S n = S(m + n).
 Proof.
 intro.
 apply Nat_Ind.
@@ -92,21 +92,29 @@ rewrite <- add_O_R_Identity.
 rewrite <- add_O_R_Identity.
 reflexivity.
 
-
+intro k.
+intros.
+rewrite add_S_R.
+rewrite add_S_R.
+rewrite add_S_R.
+rewrite H.
+reflexivity.
 Qed.
 
 Theorem add_conm : forall n m: N, (n+m) = (m + n).
 Proof.
 intro.
-apply Nat_ind.
-rewrite <- O_add_conm.
-rewrite (add_O n).
-trivial.
-intros.
+apply Nat_Ind.
+rewrite <- add_O_R_Identity.
+rewrite add_O.
+reflexivity.
 
+intro m.
+intros.
 rewrite add_S.
-rewrite <-H.
-apply (add_S2 n0 n).
+rewrite add_S_R.
+rewrite H.
+reflexivity.
 Qed.
 
 (* Now we define product, again from equational axioms instead of derive them *)
@@ -120,13 +128,13 @@ Axiom mul_S : forall m n:N, (S m) * n = n + (m * n).
 
 
 
-Lemma O_mul_conm : forall n:N, O = n * O.
+Lemma mul_O_R_Identity : forall n:N, O = n * O.
 Proof.
-apply Nat_ind.
+apply Nat_Ind.
 rewrite (mul_O O).
 trivial.
 intros.
-rewrite (mul_S).
+rewrite mul_S.
 rewrite <- H.
 rewrite (add_O O).
 reflexivity.
@@ -135,10 +143,10 @@ Qed.
 
 
 
-Lemma mul_S2 : forall n m : N, m * S n = m + (m * n).
+Lemma mul_S_R : forall n m : N, m * S n = m + (m * n).
 Proof.
 intro.
-apply Nat_ind.
+apply Nat_Ind.
 rewrite (mul_O).
 rewrite add_O.
 rewrite (mul_O).
@@ -152,15 +160,73 @@ rewrite H.
 rewrite mul_S.
 rewrite add_S.
 rewrite add_S.
-
-
-
+rewrite <- add_assoc.
+rewrite <- add_assoc.
+rewrite (add_conm n).
+reflexivity.
 Qed.
+
+
+Theorem mul_add_Distr : forall n m k:N, n * (m + k) = n * m + n * k.
+Proof.
+intros n m.
+apply Nat_Ind.
+rewrite <- mul_O_R_Identity.
+rewrite <- add_O_R_Identity.
+rewrite <- add_O_R_Identity.
+reflexivity.
+
+intro k.
+intros.
+rewrite add_S_R.
+rewrite mul_S_R.
+rewrite mul_S_R.
+rewrite H.
+rewrite <- add_assoc.
+rewrite (add_conm n).
+rewrite add_assoc.
+reflexivity.
+Qed.
+
+Theorem mul_Assoc : forall n m k:N, n * m * k = n * (m * k).
+Proof.
+intros n m.
+apply Nat_Ind.
+rewrite <- (mul_O_R_Identity (n * m)).
+rewrite <- (mul_O_R_Identity m).
+rewrite <- (mul_O_R_Identity n).
+reflexivity.
+
+intro k.
+intros.
+rewrite mul_S_R.
+rewrite mul_S_R.
+rewrite mul_add_Distr.
+rewrite H.
+reflexivity.
+Qed.
+
+
+
 
 Theorem mul_conm : forall n m:N, n * m = m * n.
 Proof.
 intro n.
-apply Nat_ind.  
+apply Nat_Ind.
+rewrite <- mul_O_R_Identity.
+rewrite mul_O.
+reflexivity.
+
+intro m.
+intros.
+rewrite mul_S_R.
+rewrite mul_S.
+rewrite H.
+reflexivity.
+Qed.
+
+
+
 
 
 
