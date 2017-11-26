@@ -1,0 +1,126 @@
+\newcommand{\NatF}
+           {\forall X. (X \Rightarrow X) \Rightarrow X \Rightarrow X}
+
+%\newcommand{\N}
+%           {\mathfrak{N}}
+           
+\newcommand{\Arr}
+           {\Rightarrow}
+
+           
+\section{Exercise 37 - Arithmetic functions in SystemF}
+
+One way to solve this exercise is to do in the same way then in Exercise
+14, constructing a proof tree and collecting equations
+to form a system. Then find an unifier.
+
+This could work by hand in this small examples, as a guide to figure out
+types, but not in general as SystemF typing is not decidable in general
+[Wells96]. %TODO bibtex blah blah
+(Proofs are no longer syntax directed and unification is no longer first
+order).
+
+Since we have to write {\bf a} type, and it is very intuitive which one
+we want, We'll show a typing derivation for that type instead of trying
+to infer one from scratch.
+
+
+
+We will use the notation
+$\N := \NatF$, folding and unfolding this definition when we
+need it.
+
+\subsection*{Addition}
+
+
+\begin{theorem}
+  Let $Add = \lambda m n f x . m f (n f x)$, then:
+  $\emptyset \vdash Add : \N \Arr \N \Arr \N$
+\end{theorem}
+
+\newenvironment{scprooftree}[1]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+
+
+\begin{proof}
+  We construct a proof tree:
+
+  
+  \begin{scprooftree}{0.80}
+    \def\fCenter{\vdash}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC {$\Gamma \fCenter\ m : \NatF$}
+    \RightLabel{$\forall_e$}
+    \UnaryInfC{$\Gamma 
+      \fCenter\ m : (X\Arr X)\Arr X \Arr X$}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$\Gamma \fCenter f : X\Arr X$}
+    \RightLabel{$\Arr_e$}
+    \BinaryInfC{$ \Gamma \fCenter\ m f : X \Arr X $}
+    
+
+    %----
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$\Gamma \fCenter n : \forall X. (X \Arr X)\Arr X \Arr X$}
+    \RightLabel{$\forall_e$}
+    \UnaryInfC{$\Gamma \fCenter n : (X \Arr X)\Arr X \Arr X$}
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$\Gamma \fCenter\ f : X\Arr X$}
+    \RightLabel{$\Arr_e$}
+    \BinaryInfC{$\Gamma \fCenter\ n f : X\Arr X$}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$\Gamma \fCenter\ x : X$}
+    \RightLabel{$\Arr_e$}
+    \BinaryInfC{$ \Gamma \fCenter\ n f x : X $}
+                                              \RightLabel{$\Arr_e$}
+    \BinaryInfC{$ (\Gamma \equiv) m,n:\N, f: X\Rightarrow X, x:X
+                 \fCenter\ m f (n f x) : X $}
+                                              \RightLabel{$\Rightarrow_i$}
+    
+    \UnaryInfC{$ m,n:\N, f: X\Rightarrow X \fCenter\ \lambda x. m f (n f x)
+      : \Rightarrow X \Rightarrow X $}
+                                              \RightLabel{$\Rightarrow_i$}
+    
+    \UnaryInfC{$ m,n:\N \fCenter\ \lambda f x. m f (n f x)
+      : (X\Rightarrow X) \Rightarrow X \Rightarrow X $}
+                                              \RightLabel{$\forall_i$}
+    
+    \UnaryInfC{$ m,n:\N \fCenter\ \lambda f x. m f (n f x) :\NatF(\equiv\N)$}
+                                              \RightLabel{$\Rightarrow_i$}
+    \UnaryInfC{$ m:\N \fCenter\ \lambda n f x. m f (n f x) : \N\Arr\N$}
+                                              \RightLabel{$\Rightarrow_i$}
+    \UnaryInfC{$\vdash \lambda m\ n\ f\ x. m f (n f x) : \N \Arr \N \Arr \N$}
+    
+  \end{scprooftree}
+\end{proof}
+
+
+
+\subsection*{Multiplication}
+
+\begin{theorem}
+  Let $Mult = \lambda m n f x . m (n f) x$, then:
+  $\emptyset \vdash Mult : \N \Arr \N \Arr \N$
+\end{theorem}
+\begin{proof}
+  
+  Again, we construct the derivation. To have a smaller proof we apply
+  multiple elimination rules in one step (the usual intros tactic).
+  
+  \begin{scprooftree}{1.0}
+    \def\fCenter{\vdash}
+    
+    \AxiomC{$(\Gamma \equiv) m,n:\N,f:\N\Arr\N,x:\N \fCenter m(n f) x :X$}
+    \RightLabel{$\Arr_i,\Arr_i,\forall_i,\Arr_i,\Arr_i$}
+    \UnaryInfC{$\fCenter \lambda m n f x . m (n f) x : \N\Arr\N\Arr\N$}
+  \end{scprooftree}
+\end{proof}
