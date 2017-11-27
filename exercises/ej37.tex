@@ -118,9 +118,81 @@ need it.
   
   \begin{scprooftree}{1.0}
     \def\fCenter{\vdash}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$ \Gamma \fCenter m : \forall X. (X\Arr X) \Arr X \Arr X$}
+    \RightLabel{$\forall_i$}
+    \UnaryInfC{$ \Gamma \fCenter m : (X\Arr X) \Arr X \Arr X$}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$\Gamma \fCenter n : \forall X. (X \Arr X) \Arr X \Arr X$}
+    \RightLabel{$\forall_i$}
+    \UnaryInfC{$\Gamma \fCenter n : (X \Arr X) \Arr X \Arr X$}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$\Gamma \fCenter f : X \Arr X$}
+    \BinaryInfC{$ \Gamma \fCenter (n f) : X\Arr X$}
+    \BinaryInfC{$\Gamma \fCenter m (n f): X \Arr X$}
+
+    \AxiomC{}
     
-    \AxiomC{$(\Gamma \equiv) m,n:\N,f:\N\Arr\N,x:\N \fCenter m(n f) x :X$}
+    \RightLabel{Ax}
+    \UnaryInfC{$\Gamma \fCenter x : X$}
+    \RightLabel{$\Arr_e$}
+    \BinaryInfC{$(\Gamma \equiv) m,n:\N,f:X\Arr X,x:X \fCenter m(n f) x :X$}
     \RightLabel{$\Arr_i,\Arr_i,\forall_i,\Arr_i,\Arr_i$}
     \UnaryInfC{$\fCenter \lambda m n f x . m (n f) x : \N\Arr\N\Arr\N$}
   \end{scprooftree}
 \end{proof}
+
+
+
+\subsection*{Exponentiation}
+
+
+\begin{theorem}
+  Let $Exp = \lambda m n. n m $, then:
+  $\emptyset \vdash Exp : \N \Arr \N \Arr \N$
+\end{theorem}
+\begin{proof}
+  
+  This is by far the most interesting example. Recall that this function
+  did not have this desired type in simply typed $\lambda$-calculus.
+  Now it is possible to type it as we wish. This shows the power of
+  forall quantification. Note that when we eliminate the $\forall$
+  quantifier (reading the proof bottom up), the instantiation is not
+  syntax directed.
+  
+  \begin{scprooftree}{1.0}
+    \def\fCenter{\vdash}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$m,n:\N \fCenter n: \N$}
+    \RightLabel{$\forall_e$}
+    \UnaryInfC{$m,n:\N \fCenter n:
+      ((X\Arr X)\Arr(X\Arr X))\Arr (X\Arr X)\Arr(X\Arr X)$}
+
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$m,n:\N \fCenter m: \N$}
+    \RightLabel{$\forall_e$}
+    \UnaryInfC{$m,n:\N \fCenter m: (X\Arr X)\Arr(X\Arr X)$}
+    %\BinaryInfC{$m,n:\N \fCenter n m
+    %           : ((X\Arr X)\Arr(X\Arr X))\Arr (X\Arr X)\Arr(X\Arr X)$}
+
+    
+    \BinaryInfC{$m,n:\N \fCenter n m
+               : (X\Arr X)\Arr(X\Arr X)$}
+
+    \UnaryInfC{$m,n:\N \fCenter n m :\NatF$}
+    \RightLabel{$\Arr_i, \Arr_i$}
+    \UnaryInfC{$ \fCenter \lambda m n . n m $}
+
+  \end{scprooftree}
+\end{proof}
+
+%TODO: Note that this blah blah
