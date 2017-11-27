@@ -226,11 +226,20 @@ reflexivity.
 Qed.
 
 
+(* exo 31 *)
+(*TODO: explain, here or in the tex file, how can we define this order *)
 
 
 
+(* I'll use the Prop type here*)
 
+Variable Leq : N -> N -> Prop.
+Infix "<=" := Leq.
 
+Axiom leq_O : forall n:N, O <= n.
+Axiom leq_S : forall n m :N, n <= m -> (S n)<=(S m).
+
+Theorem
 
 
 
