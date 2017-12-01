@@ -318,3 +318,6 @@ Proof.
   rewrite add_conm.
   reflexivity.
 Qed.
+
+
+(* Leq order relation*)
