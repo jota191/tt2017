@@ -233,13 +233,41 @@ Qed.
 
 (* I'll use the Prop type here*)
 
-Variable Leq : N -> N -> Prop.
-Infix "<=" := Leq.
+(*Variable Leq : N -> N -> Prop.*)
 
-Axiom leq_O : forall n:N, O <= n.
-Axiom leq_S : forall n m :N, n <= m -> (S n)<=(S m).
+Definition Leq n m := exists k : N, n + k = m.
+
+
+Infix "≤" := Leq (at level 50).
+
+
+Axiom leq_O : forall n:N, O ≤ n.
+Axiom leq_S : forall n m :N, n ≤ m -> (S n) ≤ (S m).
+
+Theorem O_bottom : forall n : N, O ≤ n.
+Proof.
+  intro n.
+  apply Nat_Ind.
+    apply leq_O.
+
+    intros m H.
+    apply leq_O.
+Qed.
+
+
+Theorem not_S_below_O: forall n : N, ~ (S n ≤ O).
+Proof.
+  intro n.
+  unfold not.
+  unfold Leq.
+  intro.
+  elim H.
+  intro k.
+  intro H2.
+  rewrite add_S in H2.
+  apply (O_not_S (n+k)).
+  symmetry.
+  assumption.
+Qed.
 
 Theorem
-
-
-
