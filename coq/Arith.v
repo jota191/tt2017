@@ -291,3 +291,30 @@ Proof.
   apply (S_inj_2 (m+k)).
   assumption.
 Qed.
+
+
+Theorem leq_Add_Incr :
+  forall m m' n n' : N, m ≤ n -> m' ≤ n' -> m + m' ≤ (n + n').
+Proof.
+  intros m m' n n'.
+  intros H H2.
+  unfold Leq in H.
+  unfold Leq in H2.
+  unfold Leq.
+  elim H.
+  elim H2.
+  intro k₁.
+  intro H'.
+  intro k₂.
+  intro H2'.
+  exists (k₁ + k₂).
+  rewrite add_assoc.
+  rewrite <- add_conm.
+  rewrite <- add_assoc.
+  rewrite H'.
+  rewrite add_assoc.
+  rewrite (add_conm k₂).
+  rewrite H2'.
+  rewrite add_conm.
+  reflexivity.
+Qed.
