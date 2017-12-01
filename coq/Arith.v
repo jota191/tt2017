@@ -270,4 +270,24 @@ Proof.
   assumption.
 Qed.
 
-Theorem
+(*TODO: ver si vale la pena probar esto o lo asumo*)
+Axiom S_inj_2 : forall m n : N, S m = S n -> m = n.
+
+Theorem Leq_Stable_By_S : forall m n : N, m ≤ n <-> S m ≤ S n.
+Proof.
+  intros m n.
+  unfold iff.
+  split.
+  intro H.
+  apply leq_S.
+  assumption.
+  intro H.
+  unfold Leq in H.
+  unfold Leq.
+  elim H.
+  intros k H2.
+  rewrite add_S in H2.
+  exists k.
+  apply (S_inj_2 (m+k)).
+  assumption.
+Qed.
