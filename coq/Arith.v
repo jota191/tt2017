@@ -321,3 +321,28 @@ Qed.
 
 
 (* Leq order relation*)
+(* We must prove reflexivity, antisymmetry, and transitivity *)
+
+Theorem leq_Refl : forall n : N, n ≤ n.
+Proof.
+  intro n.  
+  unfold Leq.
+  exists O.
+  rewrite <- add_O_R_Identity.
+  reflexivity.
+Qed.
+
+Theorem leq_Trans: forall m n k:N, m ≤ n -> n ≤ k -> m ≤ k.
+Proof.
+  intros m n k.
+  intros H H2.
+  unfold Leq in H, H2.
+  elim H;elim H2.
+  intros k₁ H' k₂ H2'.
+  unfold Leq.
+  exists (k₁ + k₂).
+  rewrite (add_conm k₁).
+  rewrite <- add_assoc.
+  rewrite H2'.
+  assumption.
+Qed.
