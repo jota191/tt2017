@@ -346,3 +346,9 @@ Proof.
   rewrite H2'.
   assumption.
 Qed.
+
+Theorem leq_Antisym :
+  forall m n : N, m ≤ n -> n ≤ m -> m = n.
+Proof.
+  intros m n.
+  intros 
