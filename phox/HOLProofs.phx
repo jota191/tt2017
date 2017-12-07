@@ -64,11 +64,16 @@ Cst lInfix[3.5] x "+" y : nat -> nat -> nat.
 claim add_O_N /\y:N (O + y = y).
 claim add_S_N /\x,y:N ((S x) + y = S (x + y)).
 
-(*conmutativity*)
 
+
+
+
+(*conmutativity*)
+(*
 theorem add_conm /\x,y:N (x + y = y + x).
 intros.
 elim H.
 elim H0.
 trivial.
 elim add_O_N with y0.
+*)
