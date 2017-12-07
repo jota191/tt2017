@@ -420,40 +420,30 @@ Lemma lemma1 : forall F, I F
   assumption.
 Qed.
 
-
-(*
-Lemma lemma3 : forall F, I F
-              -> forall φ : nat -> Prop, F φ ⊂ φ
-              -> forall g, g ⊂ φ -> g ⊂ Fix F.
+Lemma lemma3
+  : forall F A, I F -> (forall φ, F φ ⊂ φ ->  A ⊂ φ) -> A ⊂ Fix F.
 Proof.
-  intros F HIF φ HFφ g HG.
-  cut (F g ⊂ F φ).
-  intro.
-  cut (F g ⊂ φ).
-  intro.
-  cut (Fix F ⊂ φ).
   intros.
-  
-
+  unfold Inclusion.
+  intros.
   unfold Fix.
-  compute.
-  intros n H1 ψ H2.
-  apply H2.
-  unfold Inclusion in HG.
-
-*)
-  
-  
-Lemma tarsky_T1 : forall F, I F -> F (Fix F) ⊂ Fix F.
-Proof.
-  intros F HIF.
-  unfold I in HIF.
-  cut ( F(F (Fix F)) ⊂ Fix F).
   intros.
-  
+  apply H0.
+  assumption.
+  assumption.
+Qed.
 
-
-  
+Theorem tarsky_T1 : forall F, I F -> F (Fix F) ⊂ Fix F.
+Proof.
+  intros F HIF.  
+  apply lemma3.
+  assumption.
+  intros.
+  apply lemma1.
+  assumption.
+  assumption.
+Qed.  
+    
 Lemma tarsky_T2 : forall F, I F -> ((Fix F) ⊂ (F (Fix F))).
 Proof.
   intros F HIF.
@@ -466,12 +456,14 @@ Qed.
 
 
 
-
-
-  Theorem tarsky_fixpoint : forall F, I F -> F (Fix F) ≡ Fix F.
-(* TODO
-Theorem leq_Antisym :
-  forall m n : N, m ≤ n -> n ≤ m -> m = n.
+Theorem tarsky_fixpoint : forall F, I F -> F (Fix F) ≡ Fix F.
 Proof.
-  intros m n.
-  intros *)
+  intros F HIF.
+  unfold Eq.
+  split.
+  apply tarsky_T1.
+  assumption.
+  apply tarsky_T2.
+  assumption.
+Qed.
+
