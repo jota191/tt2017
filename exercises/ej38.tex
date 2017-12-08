@@ -1,0 +1,161 @@
+\section{Exercise 38 - Product and Coproduct in System F}
+
+%\newcommand{\Arr}{\Rightarrow}
+
+Terms are the same as in simply typed lambda calculus.
+We will ommit computing reductions (obviowsly we must prove that
+this terms reduces to what we want) since this was
+well studied in class and at IMERL's hall, and it is trivial.
+
+Type derivations, in the other hand, will be provided if they are
+non trivial.
+
+%TODO:
+%The algorithm to encode types in System F is straightforward. Let
+%$T$ be a fresh variable, representing the type to encode, consider the type
+%of constructors $C_i$ ($C_i$ is of the form )
+
+\subsection*{Product}
+
+\begin{align}
+  A \times B := \forall X. (A\Arr B\Arr X) \Arr X \nonumber
+\end{align}
+  
+  The type of the -unique- constructor $pair$, and destructors $\pi_1$ and
+  $\pi_2$ are:
+
+\begin{align}
+  pair  :& A \Arr B \Arr A\times B  \nonumber \\
+  \pi_1 :& A \times B \Arr A        \nonumber \\
+  \pi_2 :& A \times B \Arr B        \nonumber
+\end{align}
+  
+  where they are defined as:
+
+\begin{align}
+  pair :=& \lambda a b p . p a b        \nonumber \\
+  \pi_1:=& \lambda p. p (\lambda t f.t) \nonumber \\
+  \pi_2:=& \lambda p. p (\lambda t f.f) \nonumber
+\end{align}
+
+Denoting $pair\ a\ b$ as $(a,b)$ it is easy to show that:
+
+\begin{align*}
+  \pi_1 (a,b) &\succ^{*} a \\
+  \pi_2 (a,b) &\succ^{*} b
+\end{align*}
+
+The typing proofs are the following:
+
+For $\pi_1$ (for $\pi_2$ is analogous):
+
+\newcommand{\AxB}{ \forall X. (A\Arr B \Arr X) \Arr X }
+
+\begin{scprooftree}{0.95}
+  \def\fCenter{\vdash}
+
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$p : \AxB \fCenter p : \forall X. (A\Arr B \Arr X) \Arr X$}
+  \RightLabel{$\forall_e$}
+  \UnaryInfC{$p : \AxB \fCenter p : (A\Arr B \Arr A) \Arr A$}
++
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$p : \AxB, t:A, f:B \fCenter t :A $}
+  \RightLabel{$\Arr_i, \Arr_i$}
+  \UnaryInfC{$p : \AxB \fCenter  (\lambda t f. t) : (A\Arr B \Arr A)$}
+  \BinaryInfC{$ p : \forall X. (A\Arr B \Arr X) \Arr X
+    \fCenter p (\lambda t f. t) : A$}
+  \RightLabel{$\Arr_i$}
+  \UnaryInfC{$\fCenter \lambda p.p (\lambda t f. t) : A\times B\Arr A$}
+\end{scprooftree}
+
+For $pair$:
+
+\begin{scprooftree}{0.95}
+  \def\fCenter{\vdash}
+
+  \AxiomC{}
+  \UnaryInfC{$\Gamma \fCenter p : A \Arr B \Arr X$}
+  
+  \AxiomC{}
+  \UnaryInfC{$\Gamma \fCenter a : A$}
+  \BinaryInfC{$\Gamma \fCenter p a : B \Arr X$}
+  
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$ \Gamma \fCenter b : B$}
+  \BinaryInfC{$(\Gamma := )a : A, b:B, p : A \Arr B \Arr X \fCenter p a b : X$}
+  \RightLabel{$\Arr_i, \Arr_i, \forall_i, \Arr_i$}
+  \UnaryInfC{$ \fCenter \lambda a b p . p a b : A \Arr B \Arr A \times B $}
+\end{scprooftree}
+
+\subsection*{Co-Product}
+
+Let:
+
+\begin{align}
+  A + B := \forall X. (A\Arr X) \Arr (B\Arr X) \Arr X \nonumber
+\end{align}
+
+Now we have two constructors, $inl$, $inr$
+and the case analysis destructor $C$:
+
+\begin{align*}
+  inl :& A  \Arr A + B   \\
+  inr :& B  \Arr A + B  \\
+  C   :& A + B \Arr (A \Arr C) \Arr (B \Arr C) \Arr C
+\end{align*}
+
+and the definitions:
+
+  where they are defined as:
+
+\begin{align*}
+  inl :=& \lambda a l r . l a        \\
+  inr :=& \lambda b l r . r b        \\
+  C   :=& \lambda x . x
+\end{align*}
+
+Note that we opted for the simple implementation of C now,
+in contrast to Exo 5, (but of course $C = \lambda c f g . c f g$ typechecks
+also).
+
+We provide a typing proof for $inl$ and for $C$ ($inr$ is analogous to $inl$)
+
+\begin{scprooftree}{0.95}
+  \def\fCenter{\vdash}
+
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$ \Gamma \fCenter l : A \Arr X$}
+
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$ \Gamma \fCenter a : A$}
+  \BinaryInfC{$ (\Gamma :=) a : A, l : A \Arr X, r : B \Arr X \fCenter l a : X$}
+  \RightLabel{$\Arr_i, \forall_i, \Arr_i, \Arr_i$}
+  \UnaryInfC{$ \fCenter \lambda a l r . l a
+    : A \Arr \forall X. (A \Arr X) \Arr (B \Arr X) \Arr X $}
+\end{scprooftree}
+
+
+\begin{scprooftree}{0.95}
+  \def\fCenter{\vdash}
+
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$   x : (\forall X. (A \Arr X) \Arr (B \Arr X) \Arr X
+    \fCenter x: (\forall X. (A \Arr X) \Arr (B \Arr X) \Arr X$}
+  \RightLabel{$\forall_e$}
+  \UnaryInfC{$ x : (\forall X. (A \Arr X) \Arr (B \Arr X) \Arr X)
+    \fCenter x : (A \Arr C) \Arr (B \Arr C) \Arr C$}
+  \RightLabel{$\Arr_i$}
+  \UnaryInfC{$\fCenter \lambda x . x
+    : (\forall X. (A \Arr X) \Arr (B \Arr X) \Arr X)
+    \Arr (A \Arr C) \Arr (B \Arr C) \Arr C $}
+\end{scprooftree}
+
+When we make the substitution $X := C$ in types we are actually assuming
+a more general context where $C$ is a type, no problem.
