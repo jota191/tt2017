@@ -14,8 +14,6 @@ Infix "≡" := Eq (at level 40).
 
 
 
-Axiom l1 : forall F, I F
-                     -> F (F (Fix F)) ⊂ F (Fix F) -> Fix F ⊂ F(Fix F).
 
 
 Lemma phi_ff : forall F, I F
@@ -93,7 +91,16 @@ Proof.
   assumption.
   assumption.
 Qed.  
-    
+
+Lemma l1 : forall F, I F
+                     -> F (F (Fix F)) ⊂ F (Fix F) -> Fix F ⊂ F(Fix F).
+Proof.
+  intros F HIF H.
+  apply phi_ff.
+  assumption.
+  assumption.
+Qed.
+
 Lemma tarsky_T2 : forall F, I F -> ((Fix F) ⊂ (F (Fix F))).
 Proof.
   intros F HIF.

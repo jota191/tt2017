@@ -15,21 +15,21 @@ S n + m = S(n + m)
 as axioms instead of define N and derive them.
 This will be enough since that theorems are proved when the excercises are
 asked
+
 *)
 
-Module hol.
+Module Arith.
 
 
 (* I define the Variable N, Type will be the sort omicron (It doesn't care 
 too much) 
 *)
 
-Parameter N : Type.
+Variable N : Type.
 Variable O : N.
 Variable S : N -> N.
 
 
-Delimit Scope HOLScope with my.
 (* These are actually axioms in HOL already*)
 
 Axiom S_inj: forall n m :N, n <> m -> S m <> S n.
@@ -226,5 +226,4 @@ reflexivity.
 Qed.
 
 
-
-
+End Arith.
