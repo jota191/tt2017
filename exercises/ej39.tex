@@ -1,0 +1,145 @@
+\newcommand{\hole}{ \AxiomC{$ \qed $} }
+
+
+
+\section{Exercise 39 - Lists in System F}
+
+For this excercise we could reason in the algebraic way, since we have Product
+and coproduct, or directly encode lists usind the type of its constructors.
+The result is the same.
+
+Let:
+
+\begin{align*}
+  A^{*} := \forall X. X \Arr (A\Arr X\Arr X) \Arr X
+\end{align*}
+
+We want to program $nil$ and $cons$, constructors with types:
+
+\begin{align*}
+  nil  :& A^{*} \\
+  cons :& A \Arr A^{*} \Arr A^{*}
+\end{align*}
+
+The reasoning when programming is the same as allways when we encode datatypes,
+each (sub-)term with type $A^{*}$ should have a lambda for each existing
+constructor, and the application of the suitable one in the body,
+to the actual parameters that the constructor has, which are furthermore closed
+by outermost abstractions.
+
+So:
+
+\begin{align*}
+  nil  =& \lambda n c . n\\
+  cons =& \lambda a l n c . c a (l n c)
+\end{align*}
+
+
+Typing proofs:
+
+\begin{scprooftree}{0.95}
+  \def\fCenter{\vdash}
+
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$ n: X, c: A \Arr X \Arr X \fCenter n:X$}
+  \RightLabel{$\forall_i,\Arr_i,\Arr_i$}
+  \UnaryInfC{$\fCenter \lambda n c . n
+    : \forall X. X \Arr (A\Arr X\Arr X) \Arr X$}
+\end{scprooftree}
+
+
+
+\begin{scprooftree}{0.86}
+  \def\fCenter{\vdash}
+
+  
+
+  \AxiomC{}
+  \RightLabel{Ax}
+  \UnaryInfC{$\Gamma \fCenter c : X\Arr X\Arr A$}
+  
+  \AxiomC{}
+  \UnaryInfC{$\Gamma \fCenter a : A$}
+  \BinaryInfC{$\Gamma \fCenter c a : X\Arr X$}
+
+
+
+  \AxiomC{}%\RightLabel{Ax}
+  \UnaryInfC{$\Gamma \fCenter
+  l : \forall X . X \Arr (A \Arr X \Arr X) \Arr X) $}
+
+  \UnaryInfC{$\Gamma \fCenter l : X\Arr (A\Arr X\Arr X)\Arr X$}
+
+  \AxiomC{} \RightLabel{Ax}
+  \UnaryInfC{$\Gamma \fCenter c : A\Arr X \Arr X$}
+  \BinaryInfC{$\Gamma \fCenter l n : (A\Arr X\Arr X)\Arr X)$}
+  \AxiomC{}\RightLabel{Ax}
+  \UnaryInfC{$\Gamma \fCenter c : A\Arr X\Arr X$}
+  \BinaryInfC{$\Gamma \fCenter l n c : X$}
+
+  
+  \BinaryInfC{$(\Gamma :=) a : A, l : A^{*}, n:X, c: A\Arr X\Arr X
+    \fCenter c a (l n c):X$}
+  \UnaryInfC{$\fCenter \lambda a l n c . c a (l n c) : A\Arr A^{*}\Arr A^{*} $}
+\end{scprooftree}
+
+
+
+Finally, the map function must have type:
+
+\begin{align*}
+  map :& (A\Arr B) \Arr A^{*} \Arr B^{*}
+\end{align*}
+
+Define it as:
+
+\begin{align*}
+  map :=& map = \lambda f l n c . l n (\lambda v . c (f v))
+\end{align*}
+
+Note that actually $(\lambda v . c \:(f\: v))$ can be sugarized as $c \circ f$
+We could add a typing rule or a lemma to type compositions, but since It is
+only used here I prefer to unfold to the pointwise term when used.
+
+
+
+
+\begin{scprooftree}{0.86}
+  \def\fCenter{\vdash}
+
+  \AxiomC{}
+  \UnaryInfC{$\Gamma \fCenter
+  l : \forall X . X \Arr (A \Arr X \Arr X) \Arr X) $}
+
+  \UnaryInfC{$\Gamma \fCenter l : X\Arr (A\Arr X\Arr X)\Arr X$}
+
+  \AxiomC{}\RightLabel{Ax}
+  \UnaryInfC{$\Gamma \fCenter n : X $}
+  \BinaryInfC{$\Gamma \fCenter l n : (A \Arr X \Arr X) \Arr X$}
+  \AxiomC{}\RightLabel{Ax}
+  \UnaryInfC{$\Gamma_2 \fCenter B\Arr X\Arr X$}
+  \AxiomC{}\RightLabel{Ax}
+  \UnaryInfC{$\Gamma_2 \fCenter f: A\Arr B$}
+  \AxiomC{}\RightLabel{Ax}
+  \UnaryInfC{$\Gamma_2 \fCenter v :A$}
+  \BinaryInfC{$\Gamma_2 \fCenter f v : B$}%%%%
+  \BinaryInfC{$ ( \Gamma_2 := ) \Gamma, v: A
+    \fCenter \lambda v . c (f v) : X \Arr X$}
+  \BinaryInfC{$
+    (\Gamma :=)f : A\Arr B, l:A^{*},n:X,c:B\Arr X \Arr X
+    \fCenter l n (c \circ f) : X$}
+
+  \RightLabel{$\Arr_i,\Arr_i,\forall_i ,\Arr_i,\Arr_i $}
+
+  \UnaryInfC{$\fCenter \lambda a l n c . c a (l n c) : A\Arr A^{*}\Arr A^{*}$}
+
+\end{scprooftree}
+
+
+Finally It is easy to show that $map$ satisfies its specification:
+
+\begin{align*}
+  map\: f\: nil            &\succ^{*} nil \\
+  map\: f\: (cons\: a\: l) &\succ^{*} cons\: (f\: a) (map\: f\: l) 
+\end{align*}
