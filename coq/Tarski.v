@@ -1,6 +1,7 @@
 
 Definition Inclusion (X: nat -> Prop) (Y : nat -> Prop) := forall x:nat, X x -> Y x.
 
+
 Infix "⊂" := Inclusion (at level 50).
 
 
@@ -59,7 +60,7 @@ Lemma lemma1 : forall F, I F
   apply (inc_trans (F (Fix F)) (F φ) φ).
   assumption.
   assumption.
-  cut(Fix F  ⊂ φ).
+  cut(Fix F ⊂ φ).
   apply HIF.
   unfold Inclusion.
   unfold Fix.
