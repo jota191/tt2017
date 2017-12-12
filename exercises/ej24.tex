@@ -67,3 +67,46 @@ $ \gamma, x:s \vdash (A \Rightarrow B) : o$
 
 
 \end{proof}
+
+
+
+\begin{theorem}[Left $\exists$-elimination]
+
+  
+  The following rule is admissible:
+  
+
+  \begin{prooftree}
+    \AxiomC{$\gamma;\Gamma, \exists_s x . A \vdash B$}
+    \RightLabel{$L\exists_{e}$}
+    \UnaryInfC{$\gamma;\Gamma, A[x:=e] \vdash B$}
+  \end{prooftree}
+
+\end{theorem}
+
+\begin{proof}
+
+  We write a derivation, note that leaves are premises. Also note that we use
+  weakening and a rule that was not derivable without it ($\exists_i$). So
+  we are proving admissibility:
+
+  \begin{prooftree}
+    
+    \AxiomC{$ \gamma;\Gamma, \exists_s x . A \vdash B$}
+    \RightLabel{$\forall_i$}
+    \UnaryInfC{$\gamma; \Gamma \vdash \exists_s x . A \Rightarrow B $}
+    \RightLabel{$wk$}
+    \UnaryInfC{$\gamma; \Gamma, A[x:=e] \vdash \exists_s x . A \Rightarrow B $}
+    \AxiomC{$\gamma \vdash e : s$}
+    \AxiomC{}
+    \RightLabel{Ax}
+    \UnaryInfC{$\gamma, \Gamma, A[x:=e]\vdash A [x:=e] $}
+    \RightLabel{$\exists_i$}
+    \BinaryInfC{$\gamma;\Gamma, A[x:=e] \vdash \exists_s x . A$}
+
+    \RightLabel{$\Rightarrow_e$}
+    \BinaryInfC{$\gamma;\Gamma, A[x:=e] \vdash B$}
+  \end{prooftree}
+
+  
+\end{proof}

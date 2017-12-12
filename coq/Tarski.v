@@ -1,5 +1,6 @@
 
-Definition Inclusion (X: nat -> Prop) (Y : nat -> Prop) := forall x:nat, X x -> Y x.
+Definition Inclusion (X: nat -> Prop) (Y : nat -> Prop)
+:= forall x:nat, X x -> Y x.
 
 
 Infix "⊂" := Inclusion (at level 50).

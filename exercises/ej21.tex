@@ -2,15 +2,18 @@
 
 In general, in simply typed $\lambda$-calculus
 if we can derive a typing judgement $\Gamma \vdash t : A$
-then we can derive it extending the context.
+then we can derive it extending the context, since when checking the context
+the only interesting thing is if typing judgements belong to it
+or not.
 
 Also, if we can make a derivation in HOL,
-expanding the context (of assumptions) we can also make the derivation
-(just ignore the new axioms).
+expanding the context (of assumptions) we can also make the derivation,
+just ignore the new axioms. (Weakening).
 
 Let's be more precise:
 
-\begin{lemma}
+\begin{lemma} [Weakening in simply typed $\lambda$-calculus]
+  
   If $\Gamma \vdash t : A$ and $x \notin Dom(\Gamma)$
   then $\Gamma, x:X \vdash t : A$
 \end{lemma}
@@ -46,50 +49,87 @@ Let's be more precise:
 
     Then the following derivation is well formed:
     \begin{prooftree}
-      \AxiomC{ $\Gamma, x:A, y:X \vdash b : B $ }
-      \UnaryInfC{$\Gamma, y:X \vdash  \lambda x. b : A \Rightarrow B$}
+      \AxiomC{ $\Gamma, x:A, y:T \vdash b : B $ }
+      \UnaryInfC{$\Gamma, y:T \vdash  \lambda x. b : A \Rightarrow B$}
     \end{prooftree}
 
+    applying the induction
+    hypothesis to the term $b$.
   \item
     The application case is even more
     trivial since there is no manipulation of the context.
+    
+    If $t = u v$ then the root of the typing proof is:
+
+    \begin{prooftree}
+      \AxiomC{ $\Gamma \vdash a : A\Rightarrow B$ }
+      \AxiomC{ $\Gamma \vdash b : A $ }
+      \BinaryInfC{$\Gamma \vdash  a \, b : B$}
+    \end{prooftree}
+
+    Then the following derivation is well formed: 
+    
+    
+    \begin{prooftree}
+      \AxiomC{ $\Gamma, x : T \vdash a : A \Rightarrow B$ }
+      \AxiomC{ $\Gamma, x : T \vdash b : A $ }
+      \BinaryInfC{$\Gamma \vdash  a \, b : B$}
+    \end{prooftree}
+
+    applying induction hypothesis to $a$ and $b$.
   \end{itemize}
 \end{proof}
 
 
 
-\begin{lemma}
-  If $\Gamma \vdash t : A$ then $\Gamma,\Delta \vdash t : A$, assuming
+\begin{lemma} [Weakening in HOL]
+\label{weakening}
+  
+  If $\gamma ; \Gamma \vdash t : A$ is derivable
+  then $ \gamma ; \Gamma,\Delta \vdash t : A$ is derivable, assuming
   $\Gamma$ and $\Delta$ with disjoint domains.  
 \end{lemma}
 
 \begin{proof}
-  This is trivial by induction in the size of $\Delta$. Note that we
-  are assuming that contexts are finite.
+  I'll be more sloppy here since otherwise this is very verbose.
+
+  This lemma is trivial by induction in the size of $\Delta$ once we prove
+  that we can add a proposition to a context. (Note that we
+  are assuming that contexts are finite).
+
+  To prove this, we can use induction over the rules. For example for
+  the Axiom rule
+  we only check that $A \in \Gamma$, so this is true when we extend
+  $\Gamma$.
+
+  For inductive rules it is the same, in every rule either we do not touch
+  the context or we check if something belongs to it, which is conservative
+  when we extend it.
+  
 \end{proof}
 
-Then if $\gamma \vdash A : o $ we have
-$\gamma,\delta \vdash A : o $. So if $\Gamma$ is a well formed
+\begin{theorem}[Exercise 21]
+  If $\: \gamma ; \Gamma \vdash A$ is derivable then $\: \gamma, \delta ;
+  \Gamma, \Delta \vdash A$ is derivable.
+\end{theorem}
+
+If $\: \gamma \vdash A : o \:$ is derivable then we have
+$\:\gamma,\delta \vdash A : o \:$
+derivable by weakening in $\lambda$-calculus.
+So if $\Gamma$ is a well formed
 set of axioms under the context $\gamma$ of the underlying simply typed
 lambda calculus, it is well formed under $\gamma, \delta$.
 
-So $\gamma; \Gamma \vdash A$ implies $\gamma,\delta; \Gamma \vdash A$
-
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
+So $\gamma; \Gamma \vdash A$ derivable implies
+$\gamma,\delta; \Gamma \vdash A$ derivable.
+Applying weakening for HOL then $\gamma,\delta; \Gamma, \Delta \vdash A$ can
+be derived, as we wanted.
 
 This rule is not derivable. We are not doing sequent calculus so there
 is no way to introduce formulas in the left. Formally this is proved
 trivially by induction over the rules.
+Note that when applying a rule, the
+context is decreasing, by induction this is true for a proof,
+which contradicts the possibility of derive this rule (At least if $\delta$
+and $\Delta$ are empty).
 
