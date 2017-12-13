@@ -1,10 +1,7 @@
 \section{Exercise 24}
 
-The first rule is admissible but cannot be derived.
-
-
-For the second rule, let's do a formal proof:
-
+Let's start for what we can prove.
+The second rule is ok even without weakening.
 
 \begin{theorem}
 
@@ -69,9 +66,9 @@ $ \gamma, x:s \vdash (A \Rightarrow B) : o$
 \end{proof}
 
 
+To derive a left rule, we need to manipulate context:
 
 \begin{theorem}[Left $\exists$-elimination]
-
   
   The following rule is admissible:
   
@@ -108,5 +105,23 @@ $ \gamma, x:s \vdash (A \Rightarrow B) : o$
     \BinaryInfC{$\gamma;\Gamma, A[x:=e] \vdash B$}
   \end{prooftree}
 
-  
 \end{proof}
+
+The first rule given is also admissible. Again, now that we showed some formal
+proofs, let's be more sloppy here.
+(And also because actually we will be using
+admissible but not derivable rules everywhere, to be really formal we need
+some boring work before).
+
+We want to prove $\gamma; \Gamma \vdash \exists_s x . A$, if we unfold the
+definition of $\exists$ and do a beta reduction on the goal this is
+$\gamma; \Gamma \vdash
+\forall Y. (\forall_s x. A(x) \Rightarrow Y) \Rightarrow Y $.
+Introducing the universal quantifier and the first paremeter of the arrow,
+the goal is
+$\gamma; \Gamma, Y:o, \forall_s x. A(x) \Rightarrow Y \vdash Y $.
+Since we can derive $A[x:=e]$, applying
+$\forall_s x. A(x) \Rightarrow Y$ to $e$ and $A[x:=e]$ we have what we want.
+
+Note that we are using a lot of non-primitive rules here. 
+
