@@ -7,6 +7,233 @@
 (* I'll use the Prop type here*)
 
 (*Variable Leq : N -> N -> Prop.*)
+(****************************************************************************)
+(* In this module I implement excercises 28, 29, 30 (....)                  *)
+(* I started to do this in phox, I will show you what did I implement       *)
+(* if you wish. Since my sheet is a bit under overdue, switched to coq      *)
+(* where I know I will finish faster                                        *)
+
+(* 
+
+Instead of embed HOL in coq or define stuff over the coq constructions,
+I define every theorem we use as an axiom. For example I use:
+
+0 + n = n
+S n + m = S(n + m)
+
+as axioms instead of define N and derive them.
+This will be enough since that theorems are proved when the excercises are
+asked
+
+*)
+
+Module Arith.
+
+
+(* I define the Variable N, Type will be the sort omicron (It doesn't care 
+too much) 
+*)
+
+Variable N : Type.
+Variable O : N.
+Variable S : N -> N.
+
+
+(* These are actually axioms in HOL already*)
+
+Axiom S_inj: forall n m :N, n <> m -> S m <> S n.
+Axiom O_not_S: forall n :N, O <> S n.
+
+
+Variable Add : N -> N -> N.
+Infix "+" := Add.
+
+(* 
+
+we introduce this theorems as axioms, but they are proved from the definition
+of Addition actually 
+
+*)
+
+Axiom add_S : forall x y : N, (S x)+ y = S (x + y).
+Axiom add_O : forall y : N, O + y = y.
+
+
+(*
+again, this is proved from the definition of N, but here we use is as an axiom
+*)
+
+Axiom Nat_Ind: 
+forall P: N -> Prop, P O -> (forall n:N, P n -> P(S n)) -> forall n:N, P n.
+
+Lemma add_O_R_Identity : forall n:N, n = n + O.
+Proof.
+apply Nat_Ind.
+rewrite (add_O O).
+reflexivity.
+intros.
+rewrite (add_S).
+rewrite <- H.
+reflexivity.
+Qed.
+
+
+Lemma add_S_R : forall n m : N, m + S n = S(m + n).
+Proof.
+intro.
+apply Nat_Ind.
+rewrite (add_O).
+rewrite add_O.
+trivial.
+intros.
+rewrite add_S.
+rewrite H.
+rewrite add_S.
+reflexivity.
+Qed.
+
+Lemma add_assoc : forall m n k: N, ((n + m) + k =  n + (m + k)).
+Proof.
+intro m.
+intro n.
+apply Nat_Ind.
+rewrite <- add_O_R_Identity.
+rewrite <- add_O_R_Identity.
+reflexivity.
+
+intro k.
+intros.
+rewrite add_S_R.
+rewrite add_S_R.
+rewrite add_S_R.
+rewrite H.
+reflexivity.
+Qed.
+
+Theorem add_conm : forall n m: N, (n+m) = (m + n).
+Proof.
+intro.
+apply Nat_Ind.
+rewrite <- add_O_R_Identity.
+rewrite add_O.
+reflexivity.
+
+intro m.
+intros.
+rewrite add_S.
+rewrite add_S_R.
+rewrite H.
+reflexivity.
+Qed.
+
+(* Now we define product, again from equational axioms instead of derive them *)
+
+Variable Mul : N -> N -> N.
+Infix "*" := Mul.
+
+
+Axiom mul_O : forall n:N, O * n = O.
+Axiom mul_S : forall m n:N, (S m) * n = n + (m * n).
+
+
+
+Lemma mul_O_R_Identity : forall n:N, O = n * O.
+Proof.
+apply Nat_Ind.
+rewrite (mul_O O).
+trivial.
+intros.
+rewrite mul_S.
+rewrite <- H.
+rewrite (add_O O).
+reflexivity.
+Qed.
+
+
+
+
+Lemma mul_S_R : forall n m : N, m * S n = m + (m * n).
+Proof.
+intro.
+apply Nat_Ind.
+rewrite (mul_O).
+rewrite add_O.
+rewrite (mul_O).
+trivial.
+intro m.
+intros.
+
+rewrite mul_S.
+rewrite H.
+
+rewrite mul_S.
+rewrite add_S.
+rewrite add_S.
+rewrite <- add_assoc.
+rewrite <- add_assoc.
+rewrite (add_conm n).
+reflexivity.
+Qed.
+
+
+Theorem mul_add_Distr : forall n m k:N, n * (m + k) = n * m + n * k.
+Proof.
+intros n m.
+apply Nat_Ind.
+rewrite <- mul_O_R_Identity.
+rewrite <- add_O_R_Identity.
+rewrite <- add_O_R_Identity.
+reflexivity.
+
+intro k.
+intros.
+rewrite add_S_R.
+rewrite mul_S_R.
+rewrite mul_S_R.
+rewrite H.
+rewrite <- add_assoc.
+rewrite (add_conm n).
+rewrite add_assoc.
+reflexivity.
+Qed.
+
+Theorem mul_Assoc : forall n m k:N, n * m * k = n * (m * k).
+Proof.
+intros n m.
+apply Nat_Ind.
+rewrite <- (mul_O_R_Identity (n * m)).
+rewrite <- (mul_O_R_Identity m).
+rewrite <- (mul_O_R_Identity n).
+reflexivity.
+
+intro k.
+intros.
+rewrite mul_S_R.
+rewrite mul_S_R.
+rewrite mul_add_Distr.
+rewrite H.
+reflexivity.
+Qed.
+
+
+
+
+Theorem mul_conm : forall n m:N, n * m = m * n.
+Proof.
+intro n.
+apply Nat_Ind.
+rewrite <- mul_O_R_Identity.
+rewrite mul_O.
+reflexivity.
+
+intro m.
+intros.
+rewrite mul_S_R.
+rewrite mul_S.
+rewrite H.
+reflexivity.
+Qed.
+
 
 Definition Leq n m := exists k : N, n + k = m.
 
@@ -118,4 +345,55 @@ Proof.
   rewrite <- add_assoc.
   rewrite H2'.
   assumption.
+Qed.
+
+
+Axiom nat_inv: forall m n , S m = S n -> m = n.
+  
+Lemma sum_inj : forall n k m, m+n = m+k -> n = k.
+Proof.
+  intros n k.
+  apply (Nat_Ind (fun m => m + n = m + k -> n = k)).
+  intro H.
+  rewrite add_O in H; rewrite add_O in H; assumption.
+
+  intros m H H2.
+  rewrite add_S in H2.
+  rewrite add_S in H2.
+  apply H.
+  apply nat_inv.
+  assumption.
+Qed.
+
+Lemma sum_OOO : forall m n, m+n = O -> n = O.
+Proof.
+  intros m n H.
+  apply (Nat_Ind (fun m => m + n = O)).
+
+Theorem let_AntiSym : forall m n,  m ≤ n -> n ≤ m -> n = m.
+Proof.
+  intros m n L1 L2.
+  unfold Leq in L1; unfold Leq in L2.
+  elim L1.
+  elim L2.
+
+  intros k H s H2.
+  rewrite <- H2 in H.
+  rewrite add_assoc in H.
+  generalize add_O_R_Identity.
+  intro H3.
+  rewrite H3 in H.
+  apply sum_inj in H.
+  cut (k = O).
+  intro HK.
+  rewrite HK in H.
+  rewrite <- add_O_R_Identity in H.
+  rewrite H in H2.
+  rewrite <- add_O_R_Identity in H2.
+  symmetry.
+  assumption.
+
+  apply (sum_OOO s k).
+  assumption.
+  
 Qed.
