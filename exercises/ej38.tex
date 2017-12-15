@@ -3,17 +3,13 @@
 %\newcommand{\Arr}{\Rightarrow}
 
 Terms are the same as in simply typed lambda calculus.
-We will ommit computing reductions (obviowsly we must prove that
+Again we will ommit computing reductions (obviowsly we must prove that
 this terms reduces to what we want) since this was
-well studied in class and at IMERL's hall, and it is trivial.
+well studied in class and at IMERL's hall, in previous exercises,
+(and actially it is very easy in most cases).
 
-Type derivations, in the other hand, will be provided if they are
-non trivial.
+Type derivations, in the other hand, will be provided.
 
-%TODO:
-%The algorithm to encode types in System F is straightforward. Let
-%$T$ be a fresh variable, representing the type to encode, consider the type
-%of constructors $C_i$ ($C_i$ is of the form )
 
 \subsection*{Product}
 
@@ -40,6 +36,8 @@ Let:
   \pi_2:=& \lambda p. p (\lambda t f.f) \nonumber
 \end{align}
 
+We do not use actual booleans since they would not be well typed here.
+
 Denoting $pair\ a\ b$ as $(a,b)$ it is easy to show that:
 
 \begin{align*}
@@ -59,7 +57,7 @@ For $\pi_1$ (for $\pi_2$ is analogous):
   \AxiomC{}
   \RightLabel{Ax}
   \UnaryInfC{$p : \AxB \fCenter p : \forall X. (A\Arr B \Arr X) \Arr X$}
-  \RightLabel{$\forall_e$}
+  \RightLabel{$\forall_e$ $[X/A]$}
   \UnaryInfC{$p : \AxB \fCenter p : (A\Arr B \Arr A) \Arr A$}
 
   \AxiomC{}
@@ -73,25 +71,32 @@ For $\pi_1$ (for $\pi_2$ is analogous):
   \UnaryInfC{$\fCenter \lambda p.p (\lambda t f. t) : A\times B\Arr A$}
 \end{scprooftree}
 
+
+\newpage
 For $pair$:
 
 \begin{scprooftree}{0.95}
   \def\fCenter{\vdash}
 
   \AxiomC{}
+  \RightLabel{Ax}
   \UnaryInfC{$\Gamma \fCenter p : A \Arr B \Arr X$}
   
   \AxiomC{}
+  \RightLabel{Ax}
   \UnaryInfC{$\Gamma \fCenter a : A$}
-  \BinaryInfC{$\Gamma \fCenter p a : B \Arr X$}
+  \RightLabel{$\Arr_e$}
+  \BinaryInfC{$\Gamma \fCenter p \, a : B \Arr X$}
   
   \AxiomC{}
   \RightLabel{Ax}
   \UnaryInfC{$ \Gamma \fCenter b : B$}
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$(\Gamma := )a : A, b:B, p : A \Arr B \Arr X \fCenter p a b : X$}
   \RightLabel{$\Arr_i, \Arr_i, \forall_i, \Arr_i$}
   \UnaryInfC{$ \fCenter \lambda a b p . p a b : A \Arr B \Arr A \times B $}
 \end{scprooftree}
+
 
 \subsection*{Co-Product}
 
@@ -110,9 +115,7 @@ and the case analysis destructor $C$:
   C   :& A + B \Arr (A \Arr C) \Arr (B \Arr C) \Arr C
 \end{align*}
 
-and the definitions:
-
-  where they are defined as:
+where they are defined as:
 
 \begin{align*}
   inl :=& \lambda a l r . l a        \\
@@ -120,11 +123,11 @@ and the definitions:
   C   :=& \lambda x . x
 \end{align*}
 
-Note that we opted for the simple implementation of C now,
+Note that we chosed the simple implementation of C now,
 in contrast to Exo 5, (but of course $C = \lambda c f g . c f g$ typechecks
-also).
+also, they are $\eta$-equivalent).
 
-We provide a typing proof for $inl$ and for $C$ ($inr$ is analogous to $inl$)
+We provide typing proofs for $inl$ and for $C$ ($inr$ is analogous to $inl$)
 
 \begin{scprooftree}{0.95}
   \def\fCenter{\vdash}
@@ -136,6 +139,7 @@ We provide a typing proof for $inl$ and for $C$ ($inr$ is analogous to $inl$)
   \AxiomC{}
   \RightLabel{Ax}
   \UnaryInfC{$ \Gamma \fCenter a : A$}
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$ (\Gamma :=) a : A, l : A \Arr X, r : B \Arr X \fCenter l a : X$}
   \RightLabel{$\Arr_i, \forall_i, \Arr_i, \Arr_i$}
   \UnaryInfC{$ \fCenter \lambda a l r . l a
@@ -150,7 +154,7 @@ We provide a typing proof for $inl$ and for $C$ ($inr$ is analogous to $inl$)
   \RightLabel{Ax}
   \UnaryInfC{$   x : (\forall X. (A \Arr X) \Arr (B \Arr X) \Arr X
     \fCenter x: (\forall X. (A \Arr X) \Arr (B \Arr X) \Arr X$}
-  \RightLabel{$\forall_e$}
+  \RightLabel{$\forall_e$ $[X/C]$}
   \UnaryInfC{$ x : (\forall X. (A \Arr X) \Arr (B \Arr X) \Arr X)
     \fCenter x : (A \Arr C) \Arr (B \Arr C) \Arr C$}
   \RightLabel{$\Arr_i$}
