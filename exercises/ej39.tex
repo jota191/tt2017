@@ -3,7 +3,7 @@
 
 
 \section{Exercise 39 - Lists in System F}
-
+ 
 For this excercise we could reason in the algebraic way, since we have Product
 and coproduct, or directly encode lists usind the type of its constructors.
 The result is the same.
@@ -21,8 +21,8 @@ We want to program $nil$ and $cons$, constructors with types:
   cons :& A \Arr A^{*} \Arr A^{*}
 \end{align*}
 
-The reasoning when programming is the same as allways when we encode datatypes,
-each (sub-)term with type $A^{*}$ should have a lambda for each existing
+The reasoning when programming is the same as ever when we encode datatypes,
+each (sub)term with type $A^{*}$ should have a lambda for each existing
 constructor, and the application of the suitable one in the body,
 to the actual parameters that the constructor has, which are furthermore closed
 by outermost abstractions.
@@ -57,30 +57,35 @@ Typing proofs:
 
   \AxiomC{}
   \RightLabel{Ax}
-  \UnaryInfC{$\Gamma \fCenter c : X\Arr X\Arr A$}
+  \UnaryInfC{$\Gamma \fCenter c : A\Arr X\Arr X$}
   
   \AxiomC{}
+  \RightLabel{Ax}
   \UnaryInfC{$\Gamma \fCenter a : A$}
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$\Gamma \fCenter c a : X\Arr X$}
 
 
 
-  \AxiomC{}%\RightLabel{Ax}
+  \AxiomC{}\RightLabel{Ax}
   \UnaryInfC{$\Gamma \fCenter
   l : \forall X . X \Arr (A \Arr X \Arr X) \Arr X) $}
 
+  \RightLabel{$\forall_e$}
   \UnaryInfC{$\Gamma \fCenter l : X\Arr (A\Arr X\Arr X)\Arr X$}
 
   \AxiomC{} \RightLabel{Ax}
-  \UnaryInfC{$\Gamma \fCenter c : A\Arr X \Arr X$}
+  \UnaryInfC{$\Gamma \fCenter n : X$}
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$\Gamma \fCenter l n : (A\Arr X\Arr X)\Arr X)$}
   \AxiomC{}\RightLabel{Ax}
   \UnaryInfC{$\Gamma \fCenter c : A\Arr X\Arr X$}
   \BinaryInfC{$\Gamma \fCenter l n c : X$}
 
-  
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$(\Gamma :=) a : A, l : A^{*}, n:X, c: A\Arr X\Arr X
     \fCenter c a (l n c):X$}
+  \RightLabel{$\Arr_i, \Arr_i, \forall_i, \Arr_i$}
   \UnaryInfC{$\fCenter \lambda a l n c . c a (l n c) : A\Arr A^{*}\Arr A^{*} $}
 \end{scprooftree}
 
@@ -92,15 +97,19 @@ Finally, the map function must have type:
   map :& (A\Arr B) \Arr A^{*} \Arr B^{*}
 \end{align*}
 
+(We could close type variables to have one polymorphic function instead of
+this version parametrized by $A$ and $B$, but the proof is the same, adding
+$\forall$ introductions on the root).
+
 Define it as:
 
 \begin{align*}
   map :=& map = \lambda f l n c . l n (\lambda v . c (f v))
 \end{align*}
 
-Note that actually $(\lambda v . c \:(f\: v))$ can be sugarized as $c \circ f$
-We could add a typing rule or a lemma to type compositions, but since It is
-only used here I prefer to unfold to the pointwise term when used.
+Note that actually $(\lambda v . c \:(f\: v))$ can be sugarized as $c \circ f$.
+We could add a typing rule or a lemma to type compositions, but since it is
+only used here we prefer to unfold to the pointwise term when used.
 
 
 
@@ -109,32 +118,44 @@ only used here I prefer to unfold to the pointwise term when used.
   \def\fCenter{\vdash}
 
   \AxiomC{}
+  \RightLabel{Ax}
   \UnaryInfC{$\Gamma \fCenter
   l : \forall X . X \Arr (A \Arr X \Arr X) \Arr X) $}
-
+  \RightLabel{$\forall_e$}
   \UnaryInfC{$\Gamma \fCenter l : X\Arr (A\Arr X\Arr X)\Arr X$}
-
+  
   \AxiomC{}\RightLabel{Ax}
   \UnaryInfC{$\Gamma \fCenter n : X $}
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$\Gamma \fCenter l n : (A \Arr X \Arr X) \Arr X$}
   \AxiomC{}\RightLabel{Ax}
-  \UnaryInfC{$\Gamma_2 \fCenter B\Arr X\Arr X$}
+  \UnaryInfC{$\Gamma_2 \fCenter c : B\Arr X\Arr X$}
   \AxiomC{}\RightLabel{Ax}
   \UnaryInfC{$\Gamma_2 \fCenter f: A\Arr B$}
   \AxiomC{}\RightLabel{Ax}
   \UnaryInfC{$\Gamma_2 \fCenter v :A$}
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$\Gamma_2 \fCenter f v : B$}%%%%
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$ ( \Gamma_2 := ) \Gamma, v: A
-    \fCenter \lambda v . c (f v) : X \Arr X$}
+    \fCenter c (f v) : X \Arr X$}
+  \RightLabel{$\Arr_i$}
+  \UnaryInfC{$ \Gamma
+    \fCenter \lambda v . c (f v) : A\Arr X \Arr X$}
+  \RightLabel{$\Arr_e$}
   \BinaryInfC{$
     (\Gamma :=)f : A\Arr B, l:A^{*},n:X,c:B\Arr X \Arr X
     \fCenter l n (c \circ f) : X$}
 
   \RightLabel{$\Arr_i,\Arr_i,\forall_i ,\Arr_i,\Arr_i $}
 
-  \UnaryInfC{$\fCenter \lambda a l n c . c a (l n c) : A\Arr A^{*}\Arr A^{*}$}
-
+  \UnaryInfC{$\fCenter
+    \lambda f l n c . l n (c \circ f) : (A\Arr B) \Arr A^{*} \Arr B^{*}$}
+  
 \end{scprooftree}
+
+Note that in the $\forall_e$ we substitute the type $X$ ( a type in
+the context) to put it instead of the variable $X$.
 
 
 Finally It is easy to show that $map$ satisfies its specification:
