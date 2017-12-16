@@ -1,0 +1,36 @@
+\section{Exercise 26}
+
+Again we will not show a strict formal proof, but they can be implemented
+trivially. We assume implicitly that we previously derived some usual rules
+such as $RAA$ or $\iff_{intro}$. So to prove equivalence we prove
+double implication. Also in the second equivalence we make a proof
+by contradiction, and use $\neg \exists_s x. \neg A \iff \forall_s x . A $.
+
+\begin{theorem}
+  $A[x:=\epsilon_s (\lambda x. A)] \Leftrightarrow \exists_s x . A$
+\end{theorem}
+\begin{proof}
+
+  The left to right implication is trivial applying the rule $\exists_i$
+  of the exercise 24. We only need that
+  $\gamma \vdash \epsilon_s (\lambda x. A) : s$ which is well typed.
+
+  For the opposite we apply the $\exists_e$ rule of the exercise 24.
+
+\end{proof}
+
+
+\begin{theorem}
+  $A[x:=\epsilon_s (\lambda x. \neg A)] \Leftrightarrow \forall_s x . A$
+\end{theorem}
+\begin{proof}
+  We are using classical logic so assume by contradiction
+  $\exists_s x . \neg A$. Then applying $\exists_e$ with
+  $\neg A \Rightarrow \neg A [x:=\epsilon_s (\lambda x. \neg A)]$
+  (which is provable) we prove $\neg A [x:=\epsilon_s (\lambda x. \neg A)]$.
+  By contraposition, we proved
+  $A[x:=\epsilon_s (\lambda x. \neg A)] \Rightarrow \forall_s x . A$ (using
+  De Morgan's law and double negation elimination).
+
+  The opposite is trivial, apply the $\epsilon$ rule.
+\end{proof}
