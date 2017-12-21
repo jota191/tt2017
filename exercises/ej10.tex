@@ -1,3 +1,4 @@
+
 \section{Exercise 10 - Church-Rosser Theorem}
 
 We must show that $\succ^{*}$ is confluent.
@@ -156,12 +157,11 @@ since the definition of $D$ is different in each case.
     \item
       If $t = (\lambda y . a) b$:
       \begin{flalign*}
-      &D(t)[x:=D(u)]  &= &\\
-      &D((\lambda y.a)b)[x:=D(u)] &= &
-      \hskip0.7\textwidth\\
-      &D((\lambda y.a)b)[x:=D(u)] &= &\text{ \{ by definition of $D$\} }\\
-      &(D(a)[y := D(b)])[x:=D(u)] &\succ^{*} &
-      \text{ \{ by substitution lemma\} }\\
+        &D(t)[x:=D(u)]  &= &\\
+        &D((\lambda y.a)b)[x:=D(u)] &= &\text{ \{ by definition of $D$\} }
+        \hskip0.7\textwidth\\
+        &(D(a)[y := D(b)])[x:=D(u)] &\succ^{*} &
+        \text{ \{ by substitution lemma\} }\\
       &(D(a)[x := D(u)])[y := D(b)[x:=D(u)]] &\succ^{*}
       &\text{ \{ by inductive hypothesis \} }\\
       &(D(a[x := u)])[y := D(b)[x:=D(u)]] &\succ^{*}
