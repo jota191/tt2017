@@ -24,15 +24,15 @@ order.
   doing subtyping, which at least greatly improves error messages in
   an implementation when the algorithm stucks}
 
-Since we have to write {\bf a} type, and it is very intuitive which one
-we want, We'll show a typing derivation for that type instead of trying
-to infer one from scratch.
+Since we want to write {\bf a} type, and it is very intuitive which one
+we want for this cases, We will show a typing derivation for that
+type instead of trying to infer one from scratch.
 To define arithmetic operations we use the very well known terms, we will not
-prove here that they reduce to the desired value.
+prove here that they compute the desired value.
 
 Remark:
 Note that each time we apply a forall introduction, the binded variable does
-not occurs free in the context.
+not occurs free in the context, we will not point this every time.
 
 
 We will use the notation
@@ -173,9 +173,9 @@ need it.
   This is by far the most interesting example. Recall that this function
   did not have this desired type in simply typed $\lambda$-calculus.
   Now it is possible to type it as we wish. This shows the power of
-  forall quantification. Note that when we eliminate the $\forall$
+  universal quantification. Note that when we eliminate the $\forall$
   quantifier (reading the proof bottom up), the instantiation is not
-  syntax directed.
+  syntax directed, we guess a type on the left branch.
   
   \begin{scprooftree}{0.9}
     \def\fCenter{\vdash}

@@ -12,27 +12,33 @@ just ignore the new axioms. (Weakening).
 
 Let's be more precise:
 
-\begin{lemma} [Weakening in simply typed $\lambda$-calculus]
+\begin{lemma}
   
   If $\Gamma \vdash t : A$ and $x \notin Dom(\Gamma)$
   then $\Gamma, x:X \vdash t : A$
 \end{lemma}
 \begin{proof}
-  This is trivial by induction on $t$. Since the typing derivation
+  This is straightforward by induction on $t$. Since the typing derivation
   is syntax directed, for each shape of $t$ there is only one rule
   that could be applied in that case.
   \begin{itemize}
   \item
     If $t = x$ then the only possible derivation is
     \begin{prooftree}
-      \AxiomC{ $\Gamma(x) = A$ }
+      \alwaysNoLine
+      \AxiomC{$\vdots$}
+      \UnaryInfC{ $\Gamma(x) = A$ }
+      \alwaysSingleLine
       \UnaryInfC{$x : A$}
     \end{prooftree}
 
     and then the following derivation is well-formed:
     
     \begin{prooftree}
-      \AxiomC{ $ (\Gamma,y : X) (x) = A$ }
+      \alwaysNoLine
+      \AxiomC{$\vdots$}
+      \UnaryInfC{ $ (\Gamma,y : T) (x) = A$ }
+      \alwaysSingleLine
       \UnaryInfC{ $x : A$ }
     \end{prooftree}
 
@@ -43,13 +49,19 @@ Let's be more precise:
     If $t = \lambda x.b$ then the typing derivation must be like:
     
     \begin{prooftree}
-      \AxiomC{ $\Gamma, x:A \vdash b : B $ }
+      \alwaysNoLine
+      \AxiomC{\vdots}
+      \UnaryInfC{ $\Gamma, x:A \vdash b : B $ }
+      \alwaysSingleLine
       \UnaryInfC{$\Gamma \vdash  \lambda x. b : A \Rightarrow B$}
     \end{prooftree}
 
     Then the following derivation is well formed:
     \begin{prooftree}
-      \AxiomC{ $\Gamma, x:A, y:T \vdash b : B $ }
+      \alwaysNoLine
+      \AxiomC{\vdots}
+      \UnaryInfC{ $\Gamma, x:A, y:T \vdash b : B $ }
+      \alwaysSingleLine
       \UnaryInfC{$\Gamma, y:T \vdash  \lambda x. b : A \Rightarrow B$}
     \end{prooftree}
 
@@ -62,17 +74,25 @@ Let's be more precise:
     If $t = u v$ then the root of the typing proof is:
 
     \begin{prooftree}
-      \AxiomC{ $\Gamma \vdash a : A\Rightarrow B$ }
-      \AxiomC{ $\Gamma \vdash b : A $ }
+      \alwaysNoLine
+      \AxiomC{\vdots}
+      \UnaryInfC{ $\Gamma \vdash a : A\Rightarrow B$ }
+      \AxiomC{\vdots}
+      \UnaryInfC{ $\Gamma \vdash b : A $ }
+      \alwaysSingleLine
       \BinaryInfC{$\Gamma \vdash  a \, b : B$}
     \end{prooftree}
-
+\newpage
     Then the following derivation is well formed: 
     
     
     \begin{prooftree}
-      \AxiomC{ $\Gamma, x : T \vdash a : A \Rightarrow B$ }
-      \AxiomC{ $\Gamma, x : T \vdash b : A $ }
+      \alwaysNoLine
+      \AxiomC{\vdots}
+      \UnaryInfC{ $\Gamma, x : T \vdash a : A \Rightarrow B$ }
+      \AxiomC{\vdots}
+      \UnaryInfC{ $\Gamma, x : T \vdash b : A $ }
+      \alwaysSingleLine
       \BinaryInfC{$\Gamma \vdash  a \, b : B$}
     \end{prooftree}
 
@@ -80,6 +100,17 @@ Let's be more precise:
   \end{itemize}
 \end{proof}
 
+
+\begin{lemma} [Weakening in simply typed $\lambda$-calculus]
+  
+  If $\Gamma \vdash t : A$ and $\Delta$ is a context with disjoint domain than
+  $\Gamma$
+  then $\Gamma, \Delta \vdash t : A$
+\end{lemma}
+\begin{proof}
+  Trivial by induction on the length of $\Delta$, applying the previous lemma.
+  Note that $\Gamma$ is finite, so we can do this.
+\end{proof}
 
 
 \begin{lemma} [Weakening in HOL]
@@ -94,7 +125,7 @@ Let's be more precise:
   I'll be more sloppy here since otherwise this is very verbose.
 
   This lemma is trivial by induction in the size of $\Delta$ once we prove
-  that we can add a proposition to a context. (Note that we
+  that we can add a proposition to a context. (Note again that we
   are assuming that contexts are finite).
 
   To prove this, we can use induction over the rules. For example for
@@ -102,10 +133,9 @@ Let's be more precise:
   we only check that $A \in \Gamma$, so this is true when we extend
   $\Gamma$.
 
-  For inductive rules it is the same, in every rule either we do not touch
+  For inductive rules in every one either we do not touch
   the context or we check if something belongs to it, which is conservative
   when we extend it.
-  
 \end{proof}
 
 \begin{theorem}[Exercise 21]
@@ -131,5 +161,5 @@ trivially by induction over the rules.
 Note that when applying a rule, the
 context is decreasing, by induction this is true for a proof,
 which contradicts the possibility of derive this rule (At least if $\delta$
-and $\Delta$ are empty).
+and $\Delta$ are nonempty).
 

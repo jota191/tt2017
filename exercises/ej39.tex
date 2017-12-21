@@ -4,7 +4,8 @@
 
 \section{Exercise 39 - Lists in System F}
  
-For this excercise we could reason in the algebraic way, since we have Product
+For this excercise we could reason in the algebraic way, since we have
+already implemented product
 and coproduct, or directly encode lists usind the type of its constructors.
 The result is the same.
 
@@ -31,7 +32,7 @@ So:
 
 \begin{align*}
   nil  =& \lambda n c . n\\
-  cons =& \lambda a l n c . c a (l n c)
+  cons =& \lambda a l n c . c \, a (l\, n\, c)
 \end{align*}
 
 
@@ -104,7 +105,7 @@ $\forall$ introductions on the root).
 Define it as:
 
 \begin{align*}
-  map :=& map = \lambda f l n c . l n (\lambda v . c (f v))
+  map :=& \lambda f l n c . l n (\lambda v . c (f v))
 \end{align*}
 
 Note that actually $(\lambda v . c \:(f\: v))$ can be sugarized as $c \circ f$.
